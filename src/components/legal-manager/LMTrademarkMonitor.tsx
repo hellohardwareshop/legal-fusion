@@ -4,6 +4,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Shield, Image, AlertTriangle, CheckCircle, Eye, Brain } from 'lucide-react';
 import { toast } from 'sonner';
+
+import { useMisuseAlerts, useTrademarkAssets } from '@/lib/legal-data';
 import { motion } from 'framer-motion';
 
 interface TrademarkAsset {
@@ -27,19 +29,33 @@ interface MisuseAlert {
   detectedAt: string;
 }
 
-const mockAssets: TrademarkAsset[] = [
-  { id: 'TM-001', name: 'Primary Logo', type: 'logo', registrationNumber: 'TM-2024-001234', status: 'protected', expiryDate: '2034-06-15', violations: 2 },
-  { id: 'TM-002', name: 'Brand Name', type: 'brand_name', registrationNumber: 'TM-2024-001235', status: 'protected', expiryDate: '2034-06-15', violations: 0 },
-  { id: 'TM-003', name: 'Tagline', type: 'slogan', registrationNumber: 'TM-2024-001236', status: 'pending', expiryDate: '-', violations: 1 },
-];
 
-const mockMisuses: MisuseAlert[] = [
-  { id: 'MU-001', assetId: 'TM-001', assetName: 'Primary Logo', detectedIn: 'Partner Page: RSL-4521', severity: 'high', description: 'Logo used without proper license attribution', aiConfidence: 94, detectedAt: '2024-01-15T08:00:00Z' },
-  { id: 'MU-002', assetId: 'TM-001', assetName: 'Primary Logo', detectedIn: 'Demo: DM-7823', severity: 'medium', description: 'Modified logo version detected', aiConfidence: 87, detectedAt: '2024-01-14T16:30:00Z' },
-  { id: 'MU-003', assetId: 'TM-003', assetName: 'Tagline', detectedIn: 'Content: CNT-1122', severity: 'low', description: 'Similar tagline usage in marketing material', aiConfidence: 72, detectedAt: '2024-01-14T14:00:00Z' },
-];
 
 const LMTrademarkMonitor: React.FC = () => {
+  const { data: assetRows = [] } = useTrademarkAssets();
+  const { data: misuseRows = [] } = useMisuseAlerts();
+
+  const assets: TrademarkAsset[] = assetRows.map((row) => ({
+    id: row.ref_code,
+    name: row.name,
+    type: row.asset_type as TrademarkAsset['type'],
+    registrationNumber: row.registration_number,
+    status: row.status as TrademarkAsset['status'],
+    expiryDate: row.expiry_date,
+    violations: row.violations,
+  }));
+
+  const misuses: MisuseAlert[] = misuseRows.map((row) => ({
+    id: row.ref_code,
+    assetId: row.asset_ref,
+    assetName: row.asset_name,
+    detectedIn: row.detected_in,
+    severity: row.severity as MisuseAlert['severity'],
+    description: row.description,
+    aiConfidence: row.ai_confidence,
+    detectedAt: row.detected_at,
+  }));
+
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case 'high': return 'bg-red-500/20 text-red-400';
@@ -88,7 +104,7 @@ const LMTrademarkMonitor: React.FC = () => {
         </CardHeader>
         <CardContent>
           <div className="grid md:grid-cols-3 gap-4">
-            {mockAssets.map((asset, index) => (
+            {assets.map((asset, index) => (
               <motion.div
                 key={asset.id}
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -134,12 +150,12 @@ const LMTrademarkMonitor: React.FC = () => {
               <Brain className="h-5 w-5 text-purple-400" />
               AI-Detected Misuse
             </CardTitle>
-            <Badge variant="destructive">{mockMisuses.length} Active</Badge>
+            <Badge variant="destructive">{misuses.length} Active</Badge>
           </div>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {mockMisuses.map((misuse, index) => (
+            {misuses.map((misuse, index) => (
               <motion.div
                 key={misuse.id}
                 initial={{ opacity: 0, y: 10 }}

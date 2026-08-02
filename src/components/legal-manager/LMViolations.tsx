@@ -88,13 +88,15 @@ const LMViolations: React.FC = () => {
       return;
     }
 
-    console.log('[LEGAL_MANAGER] Violation action taken:', {
-      timestamp: new Date().toISOString(),
-      action: 'violation_action',
-      violationId: selectedViolation?.id,
-      actionType,
-      note: actionNote
-    });
+    if (selectedViolation?.rowId) {
+      const nextStatus =
+        actionType === 'escalate' || actionType === 'recommend_suspension' ? 'escalated' : 'warned';
+      updateViolation.mutate({
+        id: selectedViolation.rowId,
+        status: nextStatus,
+        action_notes: actionNote,
+      });
+    }
 
     if (actionType === 'recommend_suspension') {
       toast.success('Suspension recommendation sent to Admin. Direct suspension is FORBIDDEN.');

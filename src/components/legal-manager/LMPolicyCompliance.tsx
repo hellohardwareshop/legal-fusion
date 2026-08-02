@@ -7,6 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { FileText, CheckCircle, AlertCircle, Clock, Edit, History } from 'lucide-react';
 import { toast } from 'sonner';
+
+import { useLegalPolicies, useUpdatePolicy } from '@/lib/legal-data';
 import { motion } from 'framer-motion';
 
 interface PolicyDocument {
@@ -18,16 +20,26 @@ interface PolicyDocument {
   lastUpdated: string;
   updatedBy: string;
   complianceScore: number;
+  rowId?: string;
 }
 
-const mockPolicies: PolicyDocument[] = [
-  { id: 'POL-001', name: 'Terms of Service', type: 'terms', status: 'published', version: '3.2.1', lastUpdated: '2024-01-10', updatedBy: 'LM-A1B2', complianceScore: 98 },
-  { id: 'POL-002', name: 'Privacy Policy', type: 'privacy', status: 'pending_approval', version: '2.5.0', lastUpdated: '2024-01-14', updatedBy: 'LM-A1B2', complianceScore: 95 },
-  { id: 'POL-003', name: 'Refund Policy', type: 'refund', status: 'published', version: '1.8.3', lastUpdated: '2024-01-05', updatedBy: 'LM-C3D4', complianceScore: 100 },
-  { id: 'POL-004', name: 'Acceptable Use Policy', type: 'aup', status: 'draft', version: '2.0.0-draft', lastUpdated: '2024-01-15', updatedBy: 'LM-A1B2', complianceScore: 88 },
-];
 
 const LMPolicyCompliance: React.FC = () => {
+  const { data: policyRows = [] } = useLegalPolicies();
+  const updatePolicy = useUpdatePolicy();
+
+  const policies: PolicyDocument[] = policyRows.map((row) => ({
+    id: row.ref_code,
+    name: row.name,
+    type: row.policy_type as PolicyDocument['type'],
+    status: row.status as PolicyDocument['status'],
+    version: row.version,
+    lastUpdated: row.last_updated,
+    updatedBy: row.updated_by,
+    complianceScore: row.compliance_score,
+    rowId: row.id,
+  }));
+
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedPolicy, setSelectedPolicy] = useState<PolicyDocument | null>(null);
   const [draftContent, setDraftContent] = useState('');
@@ -92,7 +104,7 @@ const LMPolicyCompliance: React.FC = () => {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {mockPolicies.map((policy, index) => {
+            {policies.map((policy, index) => {
               const StatusIcon = getStatusConfig(policy.status).icon;
               
               return (
