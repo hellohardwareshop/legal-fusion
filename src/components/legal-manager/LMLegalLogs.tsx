@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { History, Lock, FileDown, Filter } from 'lucide-react';
 import { toast } from 'sonner';
+
+import { useLegalLogs } from '@/lib/legal-data';
 import { motion } from 'framer-motion';
 
 interface LegalLog {
@@ -17,18 +19,20 @@ interface LegalLog {
   immutable: boolean;
 }
 
-const mockLogs: LegalLog[] = [
-  { id: 'LOG-001', timestamp: '2024-01-15T10:30:00Z', action: 'Policy Draft Saved', category: 'policy', actor: 'LM-A1B2', details: 'Updated Privacy Policy draft v2.5.0', immutable: true },
-  { id: 'LOG-002', timestamp: '2024-01-15T10:15:00Z', action: 'AI Flag Reviewed', category: 'ai_flag', actor: 'LM-A1B2', details: 'Reviewed fraud language alert LA-001', immutable: true },
-  { id: 'LOG-003', timestamp: '2024-01-15T09:45:00Z', action: 'Violation Escalated', category: 'escalation', actor: 'LM-C3D4', details: 'Escalated VIO-003 to Super Admin', immutable: true },
-  { id: 'LOG-004', timestamp: '2024-01-15T09:30:00Z', action: 'Trademark Misuse Detected', category: 'trademark', actor: 'AI-SYSTEM', details: 'AI detected logo misuse in Demo DM-7823', immutable: true },
-  { id: 'LOG-005', timestamp: '2024-01-15T09:00:00Z', action: 'Document Uploaded', category: 'document', actor: 'LM-A1B2', details: 'Uploaded Master Service Agreement template', immutable: true },
-  { id: 'LOG-006', timestamp: '2024-01-14T17:30:00Z', action: 'Warning Issued', category: 'violation', actor: 'LM-A1B2', details: 'Issued warning to USR-7823 for content policy breach', immutable: true },
-  { id: 'LOG-007', timestamp: '2024-01-14T16:00:00Z', action: 'Policy Submitted', category: 'policy', actor: 'LM-C3D4', details: 'Submitted AUP draft for Admin approval', immutable: true },
-  { id: 'LOG-008', timestamp: '2024-01-14T14:30:00Z', action: 'Suspension Recommended', category: 'violation', actor: 'LM-A1B2', details: 'Recommended suspension for RSL-4521 (pending Admin)', immutable: true },
-];
 
 const LMLegalLogs: React.FC = () => {
+  const { data: logRows = [] } = useLegalLogs();
+
+  const logs: LegalLog[] = logRows.map((row) => ({
+    id: row.ref_code,
+    timestamp: row.logged_at,
+    action: row.action,
+    category: row.category as LegalLog['category'],
+    actor: row.actor,
+    details: row.details,
+    immutable: row.immutable,
+  }));
+
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'policy': return 'bg-blue-500/20 text-blue-400';
@@ -75,7 +79,7 @@ const LMLegalLogs: React.FC = () => {
       <CardContent>
         <ScrollArea className="h-[400px] pr-4">
           <div className="space-y-2">
-            {mockLogs.map((log, index) => (
+            {logs.map((log, index) => (
               <motion.div
                 key={log.id}
                 initial={{ opacity: 0, x: -10 }}

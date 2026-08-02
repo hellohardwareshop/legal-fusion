@@ -8,6 +8,8 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { AlertTriangle, User, Building, Eye, Send, Shield, Ban } from 'lucide-react';
 import { toast } from 'sonner';
+
+import { useLegalViolations, useUpdateViolation } from '@/lib/legal-data';
 import { motion } from 'framer-motion';
 
 interface Violation {
@@ -21,50 +23,29 @@ interface Violation {
   detectedAt: string;
   status: 'pending' | 'warned' | 'escalated' | 'resolved';
   previousViolations: number;
+  rowId?: string;
 }
 
-const mockViolations: Violation[] = [
-  { 
-    id: 'VIO-001', 
-    violatorType: 'partner', 
-    violatorId: 'RSL-4521', 
-    violationType: 'Misleading Claims',
-    severity: 'serious',
-    description: 'Partner advertising guaranteed returns without proper disclaimers',
-    evidence: ['Screenshot of marketing page', 'Customer complaint #CC-881'],
-    detectedAt: '2024-01-15T09:00:00Z',
-    status: 'pending',
-    previousViolations: 1
-  },
-  { 
-    id: 'VIO-002', 
-    violatorType: 'user', 
-    violatorId: 'USR-7823', 
-    violationType: 'Content Policy Breach',
-    severity: 'warning',
-    description: 'User posted prohibited promotional content',
-    evidence: ['Content ID: CNT-4421'],
-    detectedAt: '2024-01-14T16:00:00Z',
-    status: 'warned',
-    previousViolations: 0
-  },
-  { 
-    id: 'VIO-003', 
-    violatorType: 'franchise', 
-    violatorId: 'FRN-9912', 
-    violationType: 'Trademark Misuse',
-    severity: 'critical',
-    description: 'Franchise using modified brand logo without authorization',
-    evidence: ['Logo comparison report', 'Brand audit #BA-221'],
-    detectedAt: '2024-01-13T11:00:00Z',
-    status: 'escalated',
-    previousViolations: 2
-  },
-];
 
 const LMViolations: React.FC = () => {
   const [isActionOpen, setIsActionOpen] = useState(false);
   const [selectedViolation, setSelectedViolation] = useState<Violation | null>(null);
+  const { data: violationRows = [] } = useLegalViolations();
+  const updateViolation = useUpdateViolation();
+
+  const violations: Violation[] = violationRows.map((row) => ({
+    id: row.ref_code,
+    violatorType: row.violator_type as Violation['violatorType'],
+    violatorId: row.violator_id,
+    violationType: row.violation_type,
+    severity: row.severity as Violation['severity'],
+    description: row.description,
+    evidence: row.evidence ?? [],
+    detectedAt: row.detected_at,
+    status: row.status as Violation['status'],
+    previousViolations: row.previous_violations,
+    rowId: row.id,
+  }));
   const [actionType, setActionType] = useState<string>('');
   const [actionNote, setActionNote] = useState('');
 
@@ -137,12 +118,12 @@ const LMViolations: React.FC = () => {
               <AlertTriangle className="h-5 w-5 text-destructive" />
               User & Partner Violations
             </CardTitle>
-            <Badge variant="destructive">{mockViolations.filter(v => v.status === 'pending').length} Pending</Badge>
+            <Badge variant="destructive">{violations.filter(v => v.status === 'pending').length} Pending</Badge>
           </div>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {mockViolations.map((violation, index) => (
+            {violations.map((violation, index) => (
               <motion.div
                 key={violation.id}
                 initial={{ opacity: 0, y: 10 }}

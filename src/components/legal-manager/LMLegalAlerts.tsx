@@ -4,6 +4,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, Brain, Eye, ArrowUpRight, Shield } from 'lucide-react';
 import { toast } from 'sonner';
+
+import { useLegalAlerts, useUpdateAlertStatus } from '@/lib/legal-data';
 import { motion } from 'framer-motion';
 
 interface LegalAlert {
@@ -17,48 +19,28 @@ interface LegalAlert {
   detectedAt: string;
   status: 'pending' | 'reviewed' | 'escalated';
   aiSuggestion: string;
+  rowId?: string;
 }
 
-const mockAlerts: LegalAlert[] = [
-  { 
-    id: 'LA-001', 
-    type: 'fraud_language', 
-    severity: 'high', 
-    title: 'Suspicious guarantee claims detected', 
-    description: 'Partner page contains "100% guaranteed returns" language',
-    detectedIn: 'Partner: RSL-4521',
-    confidence: 92,
-    detectedAt: '2024-01-15T09:30:00Z',
-    status: 'pending',
-    aiSuggestion: 'Recommend issuing warning and requiring content revision within 48 hours'
-  },
-  { 
-    id: 'LA-002', 
-    type: 'copyright_misuse', 
-    severity: 'critical', 
-    title: 'Unauthorized logo usage', 
-    description: 'Third-party demo using brand logo without license',
-    detectedIn: 'Demo: DM-7823',
-    confidence: 98,
-    detectedAt: '2024-01-15T08:15:00Z',
-    status: 'pending',
-    aiSuggestion: 'Recommend immediate takedown notice and suspension review'
-  },
-  { 
-    id: 'LA-003', 
-    type: 'scam_pattern', 
-    severity: 'medium', 
-    title: 'Potential phishing content', 
-    description: 'User-submitted content mimics official login page',
-    detectedIn: 'Content ID: CNT-9912',
-    confidence: 78,
-    detectedAt: '2024-01-15T10:00:00Z',
-    status: 'reviewed',
-    aiSuggestion: 'Recommend content removal and user warning'
-  },
-];
 
 const LMLegalAlerts: React.FC = () => {
+  const { data: alertRows = [] } = useLegalAlerts();
+  const updateAlert = useUpdateAlertStatus();
+
+  const alerts: LegalAlert[] = alertRows.map((row) => ({
+    id: row.ref_code,
+    type: row.alert_type as LegalAlert['type'],
+    severity: row.severity as LegalAlert['severity'],
+    title: row.title,
+    description: row.description,
+    detectedIn: row.detected_in,
+    confidence: row.confidence,
+    detectedAt: row.detected_at,
+    status: row.status as LegalAlert['status'],
+    aiSuggestion: row.ai_suggestion,
+    rowId: row.id,
+  }));
+
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case 'critical': return 'bg-red-500/20 text-red-400 border-red-500/30';
@@ -79,28 +61,29 @@ const LMLegalAlerts: React.FC = () => {
   };
 
   const handleReview = (alert: LegalAlert) => {
-    console.log('[LEGAL_MANAGER] Alert reviewed:', {
-      timestamp: new Date().toISOString(),
-      action: 'alert_reviewed',
-      alertId: alert.id,
-      type: alert.type
-    });
-    toast.info('Alert marked as reviewed');
+    if (!alert.rowId) return;
+    updateAlert.mutate(
+      { id: alert.rowId, status: 'reviewed' },
+      {
+        onSuccess: () => toast.success(`Alert ${alert.id} marked as reviewed`),
+        onError: (error) => toast.error(error.message),
+      },
+    );
   };
 
   const handleEscalate = (alert: LegalAlert) => {
-    console.log('[LEGAL_MANAGER] Alert escalated:', {
-      timestamp: new Date().toISOString(),
-      action: 'alert_escalated',
-      alertId: alert.id,
-      type: alert.type,
-      aiSuggestion: alert.aiSuggestion
-    });
-    toast.success('Alert escalated to Admin for action');
+    if (!alert.rowId) return;
+    updateAlert.mutate(
+      { id: alert.rowId, status: 'escalated' },
+      {
+        onSuccess: () => toast.warning(`Alert ${alert.id} escalated to Admin`),
+        onError: (error) => toast.error(error.message),
+      },
+    );
   };
 
-  const criticalCount = mockAlerts.filter(a => a.severity === 'critical').length;
-  const highCount = mockAlerts.filter(a => a.severity === 'high').length;
+  const criticalCount = alerts.filter(a => a.severity === 'critical').length;
+  const highCount = alerts.filter(a => a.severity === 'high').length;
 
   return (
     <Card className="bg-card/50 border-border/50">
@@ -118,7 +101,7 @@ const LMLegalAlerts: React.FC = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {mockAlerts.map((alert, index) => (
+          {alerts.map((alert, index) => (
             <motion.div
               key={alert.id}
               initial={{ opacity: 0, y: 10 }}
