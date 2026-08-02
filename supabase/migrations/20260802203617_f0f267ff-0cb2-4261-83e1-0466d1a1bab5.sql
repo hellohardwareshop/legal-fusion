@@ -1,0 +1,4 @@
+CREATE POLICY "Legal vault objects readable while auth is disabled" ON storage.objects FOR SELECT TO anon, authenticated USING (bucket_id = 'legal-documents');
+CREATE POLICY "Legal vault objects insertable while auth is disabled" ON storage.objects FOR INSERT TO anon, authenticated WITH CHECK (bucket_id = 'legal-documents');
+CREATE POLICY "Legal vault objects updatable while auth is disabled" ON storage.objects FOR UPDATE TO anon, authenticated USING (bucket_id = 'legal-documents') WITH CHECK (bucket_id = 'legal-documents');
+CREATE POLICY "Legal vault objects deletable while auth is disabled" ON storage.objects FOR DELETE TO anon, authenticated USING (bucket_id = 'legal-documents');
