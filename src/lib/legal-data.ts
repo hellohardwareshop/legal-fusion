@@ -217,6 +217,7 @@ export function useUpsertDocument() {
       doc_type: string;
       access_level: string;
       size_label: string;
+      storage_path?: string;
     }) => {
       const { error } = await supabase.from("legal_documents").insert({
         ref_code: `DOC-${Date.now().toString(36).toUpperCase()}`,

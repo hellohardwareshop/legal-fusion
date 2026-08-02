@@ -118,13 +118,19 @@ const LMDocumentVault: React.FC = () => {
     setAccessLevel('');
   };
 
-  const handleDownload = (doc: VaultDocument) => {
-    console.log('[LEGAL_MANAGER] Document downloaded:', {
-      timestamp: new Date().toISOString(),
-      action: 'document_downloaded',
-      documentId: doc.id
-    });
-    toast.info('Document download initiated');
+  const handleDownload = async (doc: VaultDocument) => {
+    if (!doc.storagePath) {
+      toast.error('No file is attached to this record yet');
+      return;
+    }
+    const { data, error } = await supabase.storage
+      .from('legal-documents')
+      .createSignedUrl(doc.storagePath, 60);
+    if (error || !data) {
+      toast.error(error?.message ?? 'Could not create download link');
+      return;
+    }
+    window.open(data.signedUrl, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -204,6 +210,12 @@ const LMDocumentVault: React.FC = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
+          {isLoading && (
+            <p className="text-sm text-muted-foreground">Loading vault…</p>
+          )}
+          {!isLoading && documents.length === 0 && (
+            <p className="text-sm text-muted-foreground">No documents in the vault yet.</p>
+          )}
           {documents.map((doc, index) => (
             <motion.div
               key={doc.id}
