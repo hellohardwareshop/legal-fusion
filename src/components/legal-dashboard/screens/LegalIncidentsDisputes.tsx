@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,14 +6,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Search, FileText, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 
+import { useLegalRecords, useLogAction, useUpdateRecordStatus } from "@/lib/legal-data";
+
 const LegalIncidentsDisputes = () => {
-  const [incidents] = useState([
-    { id: "INC001", type: "IP Infringement", parties: "External vs Company", severity: "high", status: "investigating", date: "2025-06-18" },
-    { id: "INC002", type: "Contract Breach", parties: "Vendor D vs Company", severity: "critical", status: "pending_action", date: "2025-06-15" },
-    { id: "INC003", type: "Data Privacy Complaint", parties: "User vs Company", severity: "medium", status: "resolved", date: "2025-06-10" },
-    { id: "INC004", type: "Trademark Dispute", parties: "Competitor vs Company", severity: "high", status: "escalated", date: "2025-06-08" },
-    { id: "INC005", type: "Payment Dispute", parties: "Reseller vs Company", severity: "low", status: "investigating", date: "2025-06-05" },
-  ]);
+  const { data: incidents = [] } = useLegalRecords("incident");
+  const logAction = useLogAction();
+  const updateRecord = useUpdateRecordStatus();
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
@@ -36,17 +33,46 @@ const LegalIncidentsDisputes = () => {
     }
   };
 
-  const handleInvestigate = (id: string) => {
-    toast.info(`Investigation started for case ${id}`);
+  const handleInvestigate = (id: string, ref: string) => {
+    updateRecord.mutate(
+      {
+        id,
+        category: "incident",
+        status: "investigating",
+        action: "Incident Investigation Started",
+        details: `Investigation started for case ${ref}`,
+      },
+      { onSuccess: () => toast.info(`Investigation started for case ${ref}`) },
+    );
   };
 
-  const handleRecommendAction = (id: string) => {
-    toast.success(`Action recommendation submitted for case ${id}`);
+  const handleRecommendAction = (ref: string) => {
+    logAction.mutate(
+      {
+        action: "Incident Action Recommended",
+        category: "incident",
+        actor: "LM-A1B2",
+        details: `Action recommendation submitted for case ${ref}`,
+      },
+      { onSuccess: () => toast.success(`Action recommendation submitted for case ${ref}`) },
+    );
   };
 
-  const handleEscalate = (id: string) => {
-    toast.warning(`Case ${id} escalated to Super Admin`);
+  const handleEscalate = (id: string, ref: string) => {
+    updateRecord.mutate(
+      {
+        id,
+        category: "incident",
+        status: "escalated",
+        action: "Incident Escalated",
+        details: `Case ${ref} escalated to Super Admin`,
+      },
+      { onSuccess: () => toast.warning(`Case ${ref} escalated to Super Admin`) },
+    );
   };
+
+  const criticalCount = incidents.filter((i) => i.severity === "critical").length;
+  const investigatingCount = incidents.filter((i) => i.status === "investigating").length;
 
   return (
     <motion.div
@@ -57,12 +83,8 @@ const LegalIncidentsDisputes = () => {
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold text-white">Incidents & Disputes</h2>
         <div className="flex gap-2">
-          <Badge className="bg-red-500/20 text-red-400">
-            {incidents.filter(i => i.severity === "critical").length} Critical
-          </Badge>
-          <Badge className="bg-blue-500/20 text-blue-400">
-            {incidents.filter(i => i.status === "investigating").length} Investigating
-          </Badge>
+          <Badge className="bg-red-500/20 text-red-400">{criticalCount} Critical</Badge>
+          <Badge className="bg-blue-500/20 text-blue-400">{investigatingCount} Investigating</Badge>
         </div>
       </div>
 
@@ -85,24 +107,38 @@ const LegalIncidentsDisputes = () => {
             <TableBody>
               {incidents.map((incident) => (
                 <TableRow key={incident.id} className="border-slate-700/50">
-                  <TableCell className="text-amber-400 font-mono">{incident.id}</TableCell>
-                  <TableCell className="text-white">{incident.type}</TableCell>
+                  <TableCell className="text-amber-400 font-mono">{incident.ref_code}</TableCell>
+                  <TableCell className="text-white">{incident.type || incident.name}</TableCell>
                   <TableCell className="text-slate-300">{incident.parties}</TableCell>
                   <TableCell>
                     <Badge className={getSeverityColor(incident.severity)}>{incident.severity}</Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge className={getStatusColor(incident.status)}>{incident.status.replace("_", " ")}</Badge>
+                    <Badge className={getStatusColor(incident.status)}>
+                      {incident.status.replace("_", " ")}
+                    </Badge>
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      <Button size="sm" variant="ghost" onClick={() => handleInvestigate(incident.id)}>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleInvestigate(incident.id, incident.ref_code ?? incident.name)}
+                      >
                         <Search className="h-4 w-4" />
                       </Button>
-                      <Button size="sm" variant="ghost" onClick={() => handleRecommendAction(incident.id)}>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleRecommendAction(incident.ref_code ?? incident.name)}
+                      >
                         <FileText className="h-4 w-4 text-emerald-400" />
                       </Button>
-                      <Button size="sm" variant="ghost" onClick={() => handleEscalate(incident.id)}>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleEscalate(incident.id, incident.ref_code ?? incident.name)}
+                      >
                         <AlertTriangle className="h-4 w-4 text-yellow-400" />
                       </Button>
                     </div>
