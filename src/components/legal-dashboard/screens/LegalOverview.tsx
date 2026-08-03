@@ -2,13 +2,72 @@ import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, FileText, AlertTriangle, Bell } from "lucide-react";
 
+import { useLegalAlerts, useLegalRecords } from "@/lib/legal-data";
+
 const LegalOverview = () => {
+  const { data: regions = [] } = useLegalRecords("regional_compliance");
+  const { data: requests = [] } = useLegalRecords("legal_request");
+  const { data: incidents = [] } = useLegalRecords("incident");
+  const { data: compliance = [] } = useLegalRecords("compliance_gdpr");
+  const { data: kyc = [] } = useLegalRecords("compliance_kyc");
+  const { data: dataProtection = [] } = useLegalRecords("compliance_dp");
+  const { data: alerts = [] } = useLegalAlerts();
+
+  const allChecks = [...compliance, ...kyc, ...dataProtection];
+  const compliantCount = allChecks.filter((c) => c.status === "compliant").length;
+  const healthScore = allChecks.length
+    ? Math.round((compliantCount / allChecks.length) * 100)
+    : 0;
+  const openRequests = requests.filter(
+    (r) => r.status !== "resolved" && r.status !== "closed",
+  );
+  const highPriority = openRequests.filter(
+    (r) => r.priority === "high" || r.priority === "critical",
+  ).length;
+  const activeDisputes = incidents.filter((i) => i.status !== "resolved");
+  const pendingDisputes = activeDisputes.filter((i) => i.status === "pending_action").length;
+  const pendingAlerts = alerts.filter((a) => a.status === "pending");
+  const nonCompliantRegions = regions.filter((r) => r.status !== "Compliant").length;
+
   const stats = [
-    { label: "Compliance Health Score", value: "94/100", icon: Shield, trend: "All regions compliant", color: "text-emerald-400" },
-    { label: "Open Legal Requests", value: "7", icon: FileText, trend: "3 high priority", color: "text-amber-400" },
-    { label: "Active Disputes", value: "2", icon: AlertTriangle, trend: "1 pending resolution", color: "text-red-400" },
-    { label: "Policy Update Alerts", value: "4", icon: Bell, trend: "GDPR update pending", color: "text-blue-400" },
+    {
+      label: "Compliance Health Score",
+      value: `${healthScore}/100`,
+      icon: Shield,
+      trend: nonCompliantRegions === 0 ? "All regions compliant" : `${nonCompliantRegions} region(s) under review`,
+      color: "text-emerald-400",
+    },
+    {
+      label: "Open Legal Requests",
+      value: String(openRequests.length),
+      icon: FileText,
+      trend: `${highPriority} high priority`,
+      color: "text-amber-400",
+    },
+    {
+      label: "Active Disputes",
+      value: String(activeDisputes.length),
+      icon: AlertTriangle,
+      trend: `${pendingDisputes} pending resolution`,
+      color: "text-red-400",
+    },
+    {
+      label: "Policy Update Alerts",
+      value: String(pendingAlerts.length),
+      icon: Bell,
+      trend: pendingAlerts[0]?.title ?? "No pending alerts",
+      color: "text-blue-400",
+    },
   ];
+
+  const formatAge = (iso: string) => {
+    const diff = Date.now() - new Date(iso).getTime();
+    const hours = Math.round(diff / 3_600_000);
+    if (hours < 1) return "just now";
+    if (hours < 24) return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+    const days = Math.round(hours / 24);
+    return `${days} day${days === 1 ? "" : "s"} ago`;
+  };
 
   return (
     <motion.div
@@ -47,15 +106,16 @@ const LegalOverview = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {[
-                { region: "Europe (GDPR)", status: "Compliant", color: "text-emerald-400" },
-                { region: "USA (CCPA)", status: "Compliant", color: "text-emerald-400" },
-                { region: "India (DPDP)", status: "Review Pending", color: "text-yellow-400" },
-                { region: "Middle East", status: "Compliant", color: "text-emerald-400" },
-              ].map((item) => (
-                <div key={item.region} className="flex justify-between p-3 bg-slate-800/50 rounded">
-                  <span className="text-slate-300">{item.region}</span>
-                  <span className={item.color}>{item.status}</span>
+              {regions.map((item) => (
+                <div key={item.id} className="flex justify-between p-3 bg-slate-800/50 rounded">
+                  <span className="text-slate-300">{item.name}</span>
+                  <span
+                    className={
+                      item.status === "Compliant" ? "text-emerald-400" : "text-yellow-400"
+                    }
+                  >
+                    {item.status}
+                  </span>
                 </div>
               ))}
             </div>
@@ -68,15 +128,10 @@ const LegalOverview = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {[
-                { alert: "GDPR Article 17 update required", time: "2 hours ago" },
-                { alert: "Trademark renewal due (EU)", time: "1 day ago" },
-                { alert: "New compliance checklist available", time: "2 days ago" },
-                { alert: "Contract expiry warning: Vendor-A", time: "3 days ago" },
-              ].map((item, index) => (
-                <div key={index} className="flex justify-between p-3 bg-slate-800/50 rounded">
-                  <span className="text-white text-sm">{item.alert}</span>
-                  <span className="text-slate-500 text-xs">{item.time}</span>
+              {alerts.slice(0, 4).map((item) => (
+                <div key={item.id} className="flex justify-between p-3 bg-slate-800/50 rounded">
+                  <span className="text-white text-sm">{item.title}</span>
+                  <span className="text-slate-500 text-xs">{formatAge(item.detected_at)}</span>
                 </div>
               ))}
             </div>
