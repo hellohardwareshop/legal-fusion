@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,15 +6,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Eye, MessageSquare, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 
+import { useLegalRecords, useLogAction, useUpdateRecordStatus } from "@/lib/legal-data";
+
 const LegalRequests = () => {
-  const [requests] = useState([
-    { id: "REQ001", raisedBy: "FRA-****-4521", type: "Contract Review", priority: "high", status: "pending", date: "2025-06-20" },
-    { id: "REQ002", raisedBy: "RES-****-7832", type: "Policy Clarification", priority: "medium", status: "in_progress", date: "2025-06-19" },
-    { id: "REQ003", raisedBy: "DEV-****-1245", type: "NDA Request", priority: "low", status: "pending", date: "2025-06-19" },
-    { id: "REQ004", raisedBy: "INF-****-9023", type: "Compliance Query", priority: "high", status: "resolved", date: "2025-06-18" },
-    { id: "REQ005", raisedBy: "SUP-****-3456", type: "Legal Opinion", priority: "critical", status: "escalated", date: "2025-06-17" },
-    { id: "REQ006", raisedBy: "FRA-****-6789", type: "Trademark Query", priority: "medium", status: "pending", date: "2025-06-17" },
-  ]);
+  const { data: requests = [] } = useLegalRecords("legal_request");
+  const logAction = useLogAction();
+  const updateRecord = useUpdateRecordStatus();
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -37,17 +33,47 @@ const LegalRequests = () => {
     }
   };
 
-  const handleReview = (id: string) => {
-    toast.info(`Reviewing request ${id}`);
+  const handleReview = (id: string, ref: string) => {
+    updateRecord.mutate(
+      {
+        id,
+        category: "legal_request",
+        status: "in_progress",
+        action: "Legal Request Reviewed",
+        details: `Request ${ref} under review`,
+      },
+      { onSuccess: () => toast.info(`Reviewing request ${ref}`) },
+    );
   };
 
-  const handleRespond = (id: string) => {
-    toast.success(`Response sent for request ${id}`);
+  const handleRespond = (id: string, ref: string) => {
+    updateRecord.mutate(
+      {
+        id,
+        category: "legal_request",
+        status: "resolved",
+        action: "Legal Request Resolved",
+        details: `Response sent for request ${ref}`,
+      },
+      { onSuccess: () => toast.success(`Response sent for request ${ref}`) },
+    );
   };
 
-  const handleEscalate = (id: string) => {
-    toast.warning(`Request ${id} escalated to Super Admin`);
+  const handleEscalate = (id: string, ref: string) => {
+    updateRecord.mutate(
+      {
+        id,
+        category: "legal_request",
+        status: "escalated",
+        action: "Legal Request Escalated",
+        details: `Request ${ref} escalated to Super Admin`,
+      },
+      { onSuccess: () => toast.warning(`Request ${ref} escalated to Super Admin`) },
+    );
+    logAction.reset();
   };
+
+  const pendingCount = requests.filter((r) => r.status === "pending").length;
 
   return (
     <motion.div
@@ -57,9 +83,7 @@ const LegalRequests = () => {
     >
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold text-white">Legal Requests</h2>
-        <Badge className="bg-amber-500/20 text-amber-400">
-          {requests.filter(r => r.status === "pending").length} Pending
-        </Badge>
+        <Badge className="bg-amber-500/20 text-amber-400">{pendingCount} Pending</Badge>
       </div>
 
       <Card className="bg-slate-900/50 border-slate-700/50">
@@ -81,24 +105,38 @@ const LegalRequests = () => {
             <TableBody>
               {requests.map((request) => (
                 <TableRow key={request.id} className="border-slate-700/50">
-                  <TableCell className="text-amber-400 font-mono">{request.id}</TableCell>
+                  <TableCell className="text-amber-400 font-mono">{request.ref_code}</TableCell>
                   <TableCell className="text-slate-300 font-mono text-sm">{request.raisedBy}</TableCell>
-                  <TableCell className="text-white">{request.type}</TableCell>
+                  <TableCell className="text-white">{request.type || request.name}</TableCell>
                   <TableCell>
                     <Badge className={getPriorityColor(request.priority)}>{request.priority}</Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge className={getStatusColor(request.status)}>{request.status.replace("_", " ")}</Badge>
+                    <Badge className={getStatusColor(request.status)}>
+                      {request.status.replace("_", " ")}
+                    </Badge>
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      <Button size="sm" variant="ghost" onClick={() => handleReview(request.id)}>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleReview(request.id, request.ref_code ?? request.name)}
+                      >
                         <Eye className="h-4 w-4" />
                       </Button>
-                      <Button size="sm" variant="ghost" onClick={() => handleRespond(request.id)}>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleRespond(request.id, request.ref_code ?? request.name)}
+                      >
                         <MessageSquare className="h-4 w-4 text-emerald-400" />
                       </Button>
-                      <Button size="sm" variant="ghost" onClick={() => handleEscalate(request.id)}>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleEscalate(request.id, request.ref_code ?? request.name)}
+                      >
                         <AlertTriangle className="h-4 w-4 text-yellow-400" />
                       </Button>
                     </div>
