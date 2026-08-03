@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,27 +5,19 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle, AlertTriangle, Shield, Database, UserCheck } from "lucide-react";
 import { toast } from "sonner";
 
+import {
+  useLegalRecords,
+  useLogAction,
+  useUpdateRecordStatus,
+  type LegalRecord,
+} from "@/lib/legal-data";
+
 const LegalComplianceChecklist = () => {
-  const [gdprItems] = useState([
-    { id: "GDPR001", item: "Right to Access (Art. 15)", status: "compliant", lastReview: "2025-06-15" },
-    { id: "GDPR002", item: "Right to Erasure (Art. 17)", status: "compliant", lastReview: "2025-06-15" },
-    { id: "GDPR003", item: "Data Portability (Art. 20)", status: "review_needed", lastReview: "2025-04-10" },
-    { id: "GDPR004", item: "Consent Management", status: "compliant", lastReview: "2025-06-18" },
-    { id: "GDPR005", item: "DPO Appointment", status: "compliant", lastReview: "2025-01-01" },
-  ]);
-
-  const [kycItems] = useState([
-    { id: "KYC001", item: "Identity Verification Flow", status: "compliant", lastReview: "2025-06-10" },
-    { id: "KYC002", item: "Document Storage Encryption", status: "compliant", lastReview: "2025-06-10" },
-    { id: "KYC003", item: "PEP/Sanctions Screening", status: "concern", lastReview: "2025-06-20" },
-  ]);
-
-  const [dataProtection] = useState([
-    { id: "DP001", item: "Data Encryption at Rest", status: "compliant", lastReview: "2025-06-01" },
-    { id: "DP002", item: "Data Encryption in Transit", status: "compliant", lastReview: "2025-06-01" },
-    { id: "DP003", item: "Access Control Policies", status: "compliant", lastReview: "2025-06-15" },
-    { id: "DP004", item: "Data Retention Policy", status: "review_needed", lastReview: "2025-03-20" },
-  ]);
+  const { data: gdprItems = [] } = useLegalRecords("compliance_gdpr");
+  const { data: kycItems = [] } = useLegalRecords("compliance_kyc");
+  const { data: dataProtection = [] } = useLegalRecords("compliance_dp");
+  const updateRecord = useUpdateRecordStatus();
+  const logAction = useLogAction();
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -37,15 +28,39 @@ const LegalComplianceChecklist = () => {
     }
   };
 
-  const handleMarkReviewed = (id: string) => {
-    toast.success(`Item ${id} marked as reviewed`);
+  const handleMarkReviewed = (item: LegalRecord, category: string) => {
+    updateRecord.mutate(
+      {
+        id: item.id,
+        category,
+        status: "compliant",
+        action: "Compliance Reviewed",
+        details: `${item.ref_code ?? item.name} marked as reviewed`,
+      },
+      { onSuccess: () => toast.success(`Item ${item.ref_code ?? item.name} marked as reviewed`) },
+    );
   };
 
-  const handleRaiseConcern = (id: string) => {
-    toast.warning(`Concern raised for item ${id}`);
+  const handleRaiseConcern = (item: LegalRecord, category: string) => {
+    updateRecord.mutate(
+      {
+        id: item.id,
+        category,
+        status: "concern",
+        action: "Compliance Concern Raised",
+        details: `Concern raised for ${item.ref_code ?? item.name}`,
+      },
+      { onSuccess: () => toast.warning(`Concern raised for item ${item.ref_code ?? item.name}`) },
+    );
+    logAction.reset();
   };
 
-  const renderChecklist = (items: typeof gdprItems, icon: React.ReactNode, title: string) => (
+  const renderChecklist = (
+    items: LegalRecord[],
+    category: string,
+    icon: React.ReactNode,
+    title: string,
+  ) => (
     <Card className="bg-slate-900/50 border-slate-700/50">
       <CardHeader>
         <CardTitle className="text-amber-400 flex items-center gap-2">
@@ -59,7 +74,7 @@ const LegalComplianceChecklist = () => {
             <div className="flex items-center gap-3">
               {getStatusIcon(item.status)}
               <div>
-                <p className="text-white text-sm">{item.item}</p>
+                <p className="text-white text-sm">{item.name}</p>
                 <p className="text-slate-500 text-xs">Last review: {item.lastReview}</p>
               </div>
             </div>
@@ -71,10 +86,10 @@ const LegalComplianceChecklist = () => {
               }>
                 {item.status.replace("_", " ")}
               </Badge>
-              <Button size="sm" variant="ghost" onClick={() => handleMarkReviewed(item.id)}>
+              <Button size="sm" variant="ghost" onClick={() => handleMarkReviewed(item, category)}>
                 <CheckCircle className="h-4 w-4" />
               </Button>
-              <Button size="sm" variant="ghost" onClick={() => handleRaiseConcern(item.id)}>
+              <Button size="sm" variant="ghost" onClick={() => handleRaiseConcern(item, category)}>
                 <AlertTriangle className="h-4 w-4" />
               </Button>
             </div>
@@ -92,9 +107,9 @@ const LegalComplianceChecklist = () => {
     >
       <h2 className="text-xl font-semibold text-white">Compliance Checklist</h2>
 
-      {renderChecklist(gdprItems, <Shield className="h-5 w-5" />, "GDPR / Local Law Status")}
-      {renderChecklist(kycItems, <UserCheck className="h-5 w-5" />, "KYC / AML Checks")}
-      {renderChecklist(dataProtection, <Database className="h-5 w-5" />, "Data Protection Rules")}
+      {renderChecklist(gdprItems, "compliance_gdpr", <Shield className="h-5 w-5" />, "GDPR / Local Law Status")}
+      {renderChecklist(kycItems, "compliance_kyc", <UserCheck className="h-5 w-5" />, "KYC / AML Checks")}
+      {renderChecklist(dataProtection, "compliance_dp", <Database className="h-5 w-5" />, "Data Protection Rules")}
     </motion.div>
   );
 };

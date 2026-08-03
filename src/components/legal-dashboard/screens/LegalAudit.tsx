@@ -1,21 +1,30 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Shield, AlertTriangle } from "lucide-react";
 
+import { useLegalLogs } from "@/lib/legal-data";
+
+const RESULT_BY_ACTION: Record<string, string> = {
+  "Policy Updated": "Approved",
+  "Policy Status Changed": "Approved",
+  "Policy Update Proposed": "Pending Approval",
+  "Contract Reviewed": "Flagged Risk",
+  "Contract Risk Flagged": "Flagged Risk",
+  "Trademark Record Requested": "Pending Approval",
+  "Trademark Renewal Requested": "Pending Approval",
+  "Incident Escalated": "Escalated",
+  "Alert Escalated": "Escalated",
+  "Violation Escalated": "Escalated",
+  "Compliance Reviewed": "Compliant",
+  "Legal Request Resolved": "Resolved",
+  "Approval Given": "Approved",
+  "Approval Rejected": "Rejected",
+};
+
 const LegalAudit = () => {
-  const [auditLogs] = useState([
-    { id: "AUD001", time: "2025-06-20 14:32:15", action: "Policy Updated", actor: "LGL-****-4521", result: "Approved", approvalRef: "APR-2025-0892" },
-    { id: "AUD002", time: "2025-06-20 13:45:22", action: "Contract Reviewed", actor: "LGL-****-4521", result: "Flagged Risk", approvalRef: "N/A" },
-    { id: "AUD003", time: "2025-06-20 12:18:09", action: "Trademark Added", actor: "LGL-****-4521", result: "Pending Approval", approvalRef: "APR-2025-0891" },
-    { id: "AUD004", time: "2025-06-20 11:55:33", action: "Incident Escalated", actor: "LGL-****-4521", result: "Escalated", approvalRef: "ESC-2025-0234" },
-    { id: "AUD005", time: "2025-06-20 10:22:41", action: "Compliance Reviewed", actor: "LGL-****-4521", result: "Compliant", approvalRef: "N/A" },
-    { id: "AUD006", time: "2025-06-19 16:45:18", action: "Legal Request Resolved", actor: "LGL-****-4521", result: "Resolved", approvalRef: "N/A" },
-    { id: "AUD007", time: "2025-06-19 15:30:22", action: "Approval Given", actor: "LGL-****-4521", result: "Approved", approvalRef: "APR-2025-0890" },
-    { id: "AUD008", time: "2025-06-19 14:12:55", action: "Approval Rejected", actor: "LGL-****-4521", result: "Rejected", approvalRef: "APR-2025-0889" },
-  ]);
+  const { data: logs = [] } = useLegalLogs();
 
   const getResultColor = (result: string) => {
     switch (result) {
@@ -64,17 +73,26 @@ const LegalAudit = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {auditLogs.map((log) => (
-                <TableRow key={log.id} className="border-slate-700/50">
-                  <TableCell className="text-slate-300 font-mono text-sm">{log.time}</TableCell>
-                  <TableCell className="text-white">{log.action}</TableCell>
-                  <TableCell className="text-slate-300 font-mono text-sm">{log.actor}</TableCell>
-                  <TableCell className={getResultColor(log.result)}>{log.result}</TableCell>
-                  <TableCell className={log.approvalRef === "N/A" ? "text-slate-500" : "text-amber-400 font-mono text-sm"}>
-                    {log.approvalRef}
-                  </TableCell>
-                </TableRow>
-              ))}
+              {logs.map((log) => {
+                const result = RESULT_BY_ACTION[log.action] ?? "Logged";
+                const approvalRef =
+                  result === "Approved" || result === "Pending Approval" || result === "Escalated"
+                    ? log.ref_code
+                    : "N/A";
+                return (
+                  <TableRow key={log.id} className="border-slate-700/50">
+                    <TableCell className="text-slate-300 font-mono text-sm">
+                      {new Date(log.logged_at).toLocaleString("sv-SE").replace("T", " ")}
+                    </TableCell>
+                    <TableCell className="text-white">{log.action}</TableCell>
+                    <TableCell className="text-slate-300 font-mono text-sm">{log.actor}</TableCell>
+                    <TableCell className={getResultColor(result)}>{result}</TableCell>
+                    <TableCell className={approvalRef === "N/A" ? "text-slate-500" : "text-amber-400 font-mono text-sm"}>
+                      {approvalRef}
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
             </TableBody>
           </Table>
         </CardContent>

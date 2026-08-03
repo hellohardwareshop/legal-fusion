@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,34 +6,36 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Eye, Edit } from "lucide-react";
 import { toast } from "sonner";
 
-const LegalPoliciesTerms = () => {
-  const [policies, setPolicies] = useState([
-    { id: "POL001", name: "Terms of Service", version: "3.2", region: "Global", status: "active", lastUpdated: "2025-06-15" },
-    { id: "POL002", name: "Privacy Policy", version: "4.1", region: "Global", status: "active", lastUpdated: "2025-06-10" },
-    { id: "POL003", name: "GDPR Addendum", version: "2.0", region: "EU", status: "active", lastUpdated: "2025-05-20" },
-    { id: "POL004", name: "Cookie Policy", version: "1.8", region: "Global", status: "review", lastUpdated: "2025-06-18" },
-    { id: "POL005", name: "Refund Policy", version: "2.3", region: "Global", status: "active", lastUpdated: "2025-04-01" },
-    { id: "POL006", name: "CCPA Disclosure", version: "1.5", region: "USA", status: "active", lastUpdated: "2025-03-15" },
-    { id: "POL007", name: "Data Processing Agreement", version: "3.0", region: "Global", status: "draft", lastUpdated: "2025-06-20" },
-  ]);
-  const [viewingPolicy, setViewingPolicy] = useState<string | null>(null);
+import { useLegalRecords, useUpdateRecordStatus, useLogAction } from "@/lib/legal-data";
 
-  const handleProposeUpdate = (id: string) => {
-    const policy = policies.find(p => p.id === id);
-    if (policy) {
-      setPolicies(prev => prev.map(p => 
-        p.id === id ? { ...p, status: 'review' } : p
-      ));
-      toast.success(`Update proposal for "${policy.name}" submitted for boss approval`);
-    }
+const LegalPoliciesTerms = () => {
+  const { data: policies = [] } = useLegalRecords("policy");
+  const updateRecord = useUpdateRecordStatus();
+  const logAction = useLogAction();
+
+  const handleProposeUpdate = (id: string, name: string) => {
+    updateRecord.mutate(
+      {
+        id,
+        category: "policy",
+        status: "review",
+        action: "Policy Update Proposed",
+        details: `Update proposal submitted for "${name}"`,
+      },
+      { onSuccess: () => toast.success(`Update proposal for "${name}" submitted for boss approval`) },
+    );
   };
 
-  const handleView = (id: string) => {
-    const policy = policies.find(p => p.id === id);
-    if (policy) {
-      setViewingPolicy(id);
-      toast.success(`Viewing: ${policy.name} v${policy.version}`);
-    }
+  const handleView = (name: string, version: string) => {
+    logAction.mutate(
+      {
+        action: "Policy Viewed",
+        category: "policy",
+        actor: "LM-A1B2",
+        details: `Viewed ${name} ${version}`,
+      },
+      { onSuccess: () => toast.success(`Viewing: ${name} ${version}`) },
+    );
   };
 
   return (
@@ -65,7 +66,7 @@ const LegalPoliciesTerms = () => {
               {policies.map((policy) => (
                 <TableRow key={policy.id} className="border-slate-700/50">
                   <TableCell className="text-white font-medium">{policy.name}</TableCell>
-                  <TableCell className="text-slate-300">v{policy.version}</TableCell>
+                  <TableCell className="text-slate-300">{policy.version}</TableCell>
                   <TableCell className="text-slate-300">{policy.region}</TableCell>
                   <TableCell>
                     <Badge className={
@@ -76,13 +77,13 @@ const LegalPoliciesTerms = () => {
                       {policy.status}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-slate-300">{policy.lastUpdated}</TableCell>
+                  <TableCell className="text-slate-300">{policy.updated}</TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      <Button size="sm" variant="ghost" onClick={() => handleView(policy.id)}>
+                      <Button size="sm" variant="ghost" onClick={() => handleView(policy.name, policy.version)}>
                         <Eye className="h-4 w-4" />
                       </Button>
-                      <Button size="sm" variant="ghost" onClick={() => handleProposeUpdate(policy.id)}>
+                      <Button size="sm" variant="ghost" onClick={() => handleProposeUpdate(policy.id, policy.name)}>
                         <Edit className="h-4 w-4 text-amber-400" />
                       </Button>
                     </div>
