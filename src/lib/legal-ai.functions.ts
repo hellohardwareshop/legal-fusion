@@ -1,0 +1,72 @@
+import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
+
+import { buildLegalPrompts, type LegalAIType } from "./legal-ai.server";
+
+const inputSchema = z.object({
+  type: z
+    .enum([
+      "legal_chat",
+      "contract_draft",
+      "compliance_check",
+      "risk_analysis",
+      "clause_suggest",
+      "nda_review",
+    ])
+    .default("legal_chat"),
+  prompt: z.string().min(1).max(8000),
+  context: z
+    .object({
+      jurisdiction: z.string().max(120).optional(),
+      contractType: z.string().max(120).optional(),
+      context: z.string().max(500).optional(),
+    })
+    .optional(),
+});
+
+export const askLegalAI = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => inputSchema.parse(data))
+  .handler(async ({ data }) => {
+    const apiKey = process.env["LOVABLE_API_KEY"];
+    if (!apiKey) {
+      return { result: null, error: "AI service is not configured" };
+    }
+
+    const { systemPrompt, userPrompt } = buildLegalPrompts(
+      data.type as LegalAIType,
+      data.prompt,
+      data.context ?? {},
+    );
+
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+      }),
+    });
+
+    if (response.status === 429) {
+      return { result: null, error: "Rate limit reached, please try again shortly" };
+    }
+    if (response.status === 402) {
+      return { result: null, error: "AI credits exhausted for this workspace" };
+    }
+    if (!response.ok) {
+      console.error("Legal AI gateway error", response.status, await response.text());
+      return { result: null, error: "AI service temporarily unavailable" };
+    }
+
+    const payload = (await response.json()) as {
+      choices?: Array<{ message?: { content?: string } }>;
+    };
+    const result = payload.choices?.[0]?.message?.content ?? null;
+    return { result, error: result ? null : "Empty AI response" };
+  });
