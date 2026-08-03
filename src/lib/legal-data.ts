@@ -274,3 +274,32 @@ export function useUpdatePolicy() {
     },
   });
 }
+
+/** Update a catalogue record's status (contracts, requests, incidents, approvals, compliance items). */
+export function useUpdateRecordStatus() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      id,
+      category,
+      status,
+      action,
+      details,
+    }: {
+      id: string;
+      category: string;
+      status: string;
+      action: string;
+      details: string;
+    }) => {
+      const { error } = await supabase.from("legal_records").update({ status }).eq("id", id);
+      if (error) throw error;
+      await appendLog({ action, category, actor: "LM-A1B2", details });
+      return { id, status };
+    },
+    onSuccess: (_res, vars) => {
+      qc.invalidateQueries({ queryKey: ["legal_records", vars.category] });
+      qc.invalidateQueries({ queryKey: ["legal_logs"] });
+    },
+  });
+}
