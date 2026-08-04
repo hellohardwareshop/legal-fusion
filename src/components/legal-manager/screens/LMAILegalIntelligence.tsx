@@ -1,29 +1,64 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Brain, FileText, AlertTriangle, GitCompare, Globe, Lightbulb, Eye, Edit, Lock, CheckCircle, History, Sparkles } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Brain, FileText, AlertTriangle, GitCompare, Globe, Lightbulb, Eye, Edit, Lock, CheckCircle, History, Sparkles, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { useLegalRecords } from "@/lib/legal-data";
+import { useLegalAI } from "@/hooks/useLegalAI";
+import type { LegalAIType } from "@/lib/legal-ai.server";
 
 interface LMAILegalIntelligenceProps {
   activeSubSection: string;
 }
 
+const AI_TASKS: Record<string, { type: LegalAIType; placeholder: string }> = {
+  "Auto Draft Agreements": { type: "contract_draft", placeholder: "Describe the agreement to draft (parties, scope, term, jurisdiction)..." },
+  "Auto Risk Detection": { type: "risk_analysis", placeholder: "Paste the clause, contract or scenario to analyse for risk..." },
+  "Clause Conflict Detection": { type: "clause_suggest", placeholder: "Paste the clauses to check for conflicts or gaps..." },
+  "Country Law Mismatch": { type: "compliance_check", placeholder: "Describe the product/operation and the countries involved..." },
+  "Auto Update Suggestions": { type: "clause_suggest", placeholder: "Paste the policy or contract text needing update suggestions..." },
+  "NDA Review": { type: "nda_review", placeholder: "Paste the NDA text to review..." },
+};
 
 const LMAILegalIntelligence = ({ activeSubSection }: LMAILegalIntelligenceProps) => {
   const { data: aiFeatures = [] } = useLegalRecords("ai_feature");
+  const { callLegalAI, isLoading } = useLegalAI();
+  const [openTask, setOpenTask] = useState<string | null>(null);
+  const [input, setInput] = useState("");
+  const [result, setResult] = useState<string | null>(null);
+
+  const runAI = async (item: string) => {
+    if (!input.trim()) {
+      toast.error("Enter the details for the AI to work on");
+      return;
+    }
+    const task = AI_TASKS[item] ?? { type: "legal_chat" as LegalAIType, placeholder: "" };
+    const res = await callLegalAI(task.type, input.trim());
+    if (res) setResult(res);
+  };
+
   const handleAction = (action: string, item: string) => {
+    if (action === "run") {
+      setOpenTask(item);
+      setInput("");
+      setResult(null);
+      return;
+    }
     const toastMap: Record<string, () => void> = {
       view: () => toast.info(`Viewing: ${item}`),
       edit: () => toast.info(`Editing: ${item}`),
-      run: () => toast.success(`Running AI: ${item}`),
       train: () => toast.info(`Training AI: ${item}`),
       history: () => toast.info(`Viewing history: ${item}`),
     };
     toastMap[action]?.();
   };
+
 
   return (
     <div className="space-y-6">
@@ -117,7 +152,38 @@ const LMAILegalIntelligence = ({ activeSubSection }: LMAILegalIntelligenceProps)
           </div>
         </CardContent>
       </Card>
+
+      <Dialog open={openTask !== null} onOpenChange={(o) => !o && setOpenTask(null)}>
+        <DialogContent className="max-w-2xl bg-slate-900 border-slate-700">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-pink-400">
+              <Sparkles className="w-5 h-5" />
+              {openTask}
+            </DialogTitle>
+          </DialogHeader>
+          <Textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder={(openTask && AI_TASKS[openTask]?.placeholder) || "Describe what you need the legal AI to do..."}
+            className="min-h-28 bg-slate-800/60 border-slate-700"
+          />
+          <Button
+            onClick={() => openTask && runAI(openTask)}
+            disabled={isLoading}
+            className="bg-pink-600 hover:bg-pink-700 text-white"
+          >
+            {isLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Brain className="w-4 h-4 mr-2" />}
+            {isLoading ? "Analysing..." : "Run AI"}
+          </Button>
+          {result && (
+            <ScrollArea className="max-h-72 rounded-lg border border-slate-700 bg-slate-800/40 p-4">
+              <p className="text-sm text-slate-200 whitespace-pre-wrap">{result}</p>
+            </ScrollArea>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
+
   );
 };
 
