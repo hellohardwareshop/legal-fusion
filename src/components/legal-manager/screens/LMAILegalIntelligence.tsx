@@ -152,7 +152,38 @@ const LMAILegalIntelligence = ({ activeSubSection }: LMAILegalIntelligenceProps)
           </div>
         </CardContent>
       </Card>
+
+      <Dialog open={openTask !== null} onOpenChange={(o) => !o && setOpenTask(null)}>
+        <DialogContent className="max-w-2xl bg-slate-900 border-slate-700">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-pink-400">
+              <Sparkles className="w-5 h-5" />
+              {openTask}
+            </DialogTitle>
+          </DialogHeader>
+          <Textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder={(openTask && AI_TASKS[openTask]?.placeholder) || "Describe what you need the legal AI to do..."}
+            className="min-h-28 bg-slate-800/60 border-slate-700"
+          />
+          <Button
+            onClick={() => openTask && runAI(openTask)}
+            disabled={isLoading}
+            className="bg-pink-600 hover:bg-pink-700 text-white"
+          >
+            {isLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Brain className="w-4 h-4 mr-2" />}
+            {isLoading ? "Analysing..." : "Run AI"}
+          </Button>
+          {result && (
+            <ScrollArea className="max-h-72 rounded-lg border border-slate-700 bg-slate-800/40 p-4">
+              <p className="text-sm text-slate-200 whitespace-pre-wrap">{result}</p>
+            </ScrollArea>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
+
   );
 };
 
