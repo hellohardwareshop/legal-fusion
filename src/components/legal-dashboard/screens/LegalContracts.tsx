@@ -126,7 +126,7 @@ const LegalContracts = () => {
                         variant="ghost"
                         onClick={() => handleFlagRisk(contract.ref_code ?? contract.name)}
                       >
-                        <AlertTriangle className="h-4 w-4 text-yellow-400" />
+                        <AlertTriangle className="h-4 w-4 text-red-400" />
                       </Button>
                     </div>
                   </TableCell>
