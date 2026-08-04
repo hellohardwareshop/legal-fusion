@@ -1,29 +1,64 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Brain, FileText, AlertTriangle, GitCompare, Globe, Lightbulb, Eye, Edit, Lock, CheckCircle, History, Sparkles } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Brain, FileText, AlertTriangle, GitCompare, Globe, Lightbulb, Eye, Edit, Lock, CheckCircle, History, Sparkles, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { useLegalRecords } from "@/lib/legal-data";
+import { useLegalAI } from "@/hooks/useLegalAI";
+import type { LegalAIType } from "@/lib/legal-ai.server";
 
 interface LMAILegalIntelligenceProps {
   activeSubSection: string;
 }
 
+const AI_TASKS: Record<string, { type: LegalAIType; placeholder: string }> = {
+  "Auto Draft Agreements": { type: "contract_draft", placeholder: "Describe the agreement to draft (parties, scope, term, jurisdiction)..." },
+  "Auto Risk Detection": { type: "risk_analysis", placeholder: "Paste the clause, contract or scenario to analyse for risk..." },
+  "Clause Conflict Detection": { type: "clause_suggest", placeholder: "Paste the clauses to check for conflicts or gaps..." },
+  "Country Law Mismatch": { type: "compliance_check", placeholder: "Describe the product/operation and the countries involved..." },
+  "Auto Update Suggestions": { type: "clause_suggest", placeholder: "Paste the policy or contract text needing update suggestions..." },
+  "NDA Review": { type: "nda_review", placeholder: "Paste the NDA text to review..." },
+};
 
 const LMAILegalIntelligence = ({ activeSubSection }: LMAILegalIntelligenceProps) => {
   const { data: aiFeatures = [] } = useLegalRecords("ai_feature");
+  const { callLegalAI, isLoading } = useLegalAI();
+  const [openTask, setOpenTask] = useState<string | null>(null);
+  const [input, setInput] = useState("");
+  const [result, setResult] = useState<string | null>(null);
+
+  const runAI = async (item: string) => {
+    if (!input.trim()) {
+      toast.error("Enter the details for the AI to work on");
+      return;
+    }
+    const task = AI_TASKS[item] ?? { type: "legal_chat" as LegalAIType, placeholder: "" };
+    const res = await callLegalAI(task.type, input.trim());
+    if (res) setResult(res);
+  };
+
   const handleAction = (action: string, item: string) => {
+    if (action === "run") {
+      setOpenTask(item);
+      setInput("");
+      setResult(null);
+      return;
+    }
     const toastMap: Record<string, () => void> = {
       view: () => toast.info(`Viewing: ${item}`),
       edit: () => toast.info(`Editing: ${item}`),
-      run: () => toast.success(`Running AI: ${item}`),
       train: () => toast.info(`Training AI: ${item}`),
       history: () => toast.info(`Viewing history: ${item}`),
     };
     toastMap[action]?.();
   };
+
 
   return (
     <div className="space-y-6">
