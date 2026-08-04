@@ -56,6 +56,34 @@ const LegalContracts = () => {
     >
       <h2 className="text-xl font-semibold text-white">Contracts</h2>
 
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card className="bg-slate-900/50 border-slate-700/50">
+          <CardContent className="pt-6 text-center">
+            <p className="text-slate-400 text-sm">Total Contracts</p>
+            <p className="text-3xl font-bold text-white mt-2">{contracts.length}</p>
+          </CardContent>
+        </Card>
+        <Card className="bg-slate-900/50 border-slate-700/50">
+          <CardContent className="pt-6 text-center">
+            <p className="text-slate-400 text-sm">Active</p>
+            <p className="text-3xl font-bold text-emerald-400 mt-2">{contracts.filter(c => c.status === "active").length}</p>
+          </CardContent>
+        </Card>
+        <Card className="bg-slate-900/50 border-slate-700/50">
+          <CardContent className="pt-6 text-center">
+            <p className="text-slate-400 text-sm">Expiring Soon</p>
+            <p className="text-3xl font-bold text-yellow-400 mt-2">{contracts.filter(c => c.status === "expiring_soon").length}</p>
+          </CardContent>
+        </Card>
+        <Card className="bg-slate-900/50 border-slate-700/50">
+          <CardContent className="pt-6 text-center">
+            <p className="text-slate-400 text-sm">Under Review</p>
+            <p className="text-3xl font-bold text-blue-400 mt-2">{contracts.filter(c => c.status === "under_review").length}</p>
+          </CardContent>
+        </Card>
+      </div>
+
+
       <Card className="bg-slate-900/50 border-slate-700/50">
         <CardHeader>
           <CardTitle className="text-amber-400">All Contracts</CardTitle>
