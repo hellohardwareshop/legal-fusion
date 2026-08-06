@@ -13,6 +13,7 @@ import {
   useLegalRecords,
   useLegalViolations,
   useTrademarkAssets,
+  useUpdateRecordStatus,
 } from "@/lib/legal-data";
 
 interface LMDashboardProps {
@@ -28,6 +29,7 @@ const LMDashboard = ({ activeSubSection }: LMDashboardProps) => {
   const { data: violations = [] } = useLegalViolations();
   const { data: alerts = [] } = useLegalAlerts();
   const { data: trademarkAssets = [] } = useTrademarkAssets();
+  const updateRecord = useUpdateRecordStatus();
 
   const totalAcceptances = roleAgreements.reduce(
     (sum, r) => sum + Number(r.acceptances ?? 0),
@@ -78,6 +80,22 @@ const LMDashboard = ({ activeSubSection }: LMDashboardProps) => {
       history: () => toast.info(`Viewing history: ${item}`),
     };
     actions[action]?.();
+  };
+
+  const updateAgreement = (agreement: (typeof recentAgreements)[number], status: string, action: string) => {
+    updateRecord.mutate(
+      {
+        id: agreement.id,
+        category: "agreement",
+        status,
+        action,
+        details: `${agreement.name} set to ${status}`,
+      },
+      {
+        onSuccess: () => toast.success(`${action}: ${agreement.name}`),
+        onError: (error) => toast.error(error.message),
+      },
+    );
   };
 
   const getStatusColor = (status: string) => {
@@ -167,10 +185,10 @@ const LMDashboard = ({ activeSubSection }: LMDashboardProps) => {
                     <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleAction("edit", agreement.name)}>
                       <Edit className="w-4 h-4" />
                     </Button>
-                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleAction("lock", agreement.name)}>
+                    <Button size="icon" variant="ghost" className="h-8 w-8" disabled={updateRecord.isPending} onClick={() => updateAgreement(agreement, "locked", "Agreement Locked")}>
                       <Lock className="w-4 h-4" />
                     </Button>
-                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleAction("publish", agreement.name)}>
+                    <Button size="icon" variant="ghost" className="h-8 w-8" disabled={updateRecord.isPending} onClick={() => updateAgreement(agreement, "active", "Agreement Published")}>
                       <CheckCircle className="w-4 h-4" />
                     </Button>
                     <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleAction("history", agreement.name)}>

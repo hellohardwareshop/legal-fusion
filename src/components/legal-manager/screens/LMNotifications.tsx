@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Bell, Clock, AlertTriangle, Users, FileText, Eye, Check, X } from "lucide-react";
 import { toast } from "sonner";
 
-import { useLegalRecords } from "@/lib/legal-data";
+import { useLegalRecords, useUpdateRecordStatus } from "@/lib/legal-data";
 
 interface LMNotificationsProps {
   activeSubSection: string;
@@ -14,6 +14,7 @@ interface LMNotificationsProps {
 
 const LMNotifications = ({ activeSubSection }: LMNotificationsProps) => {
   const { data: notifications = [] } = useLegalRecords("notification");
+  const updateRecord = useUpdateRecordStatus();
   const handleAction = (action: string, item: string) => {
     const toastMap: Record<string, () => void> = {
       view: () => toast.info(`Viewing: ${item}`),
@@ -21,6 +22,22 @@ const LMNotifications = ({ activeSubSection }: LMNotificationsProps) => {
       action: () => toast.success(`Taking action on: ${item}`),
     };
     toastMap[action]?.();
+  };
+
+  const updateNotification = (item: (typeof notifications)[number], status: string, action: string) => {
+    updateRecord.mutate(
+      {
+        id: item.id,
+        category: "notification",
+        status,
+        action,
+        details: `${item.title ?? item.name} set to ${status}`,
+      },
+      {
+        onSuccess: () => toast.success(`${action}: ${item.title ?? item.name}`),
+        onError: (error) => toast.error(error.message),
+      },
+    );
   };
 
   const getPriorityColor = (priority: string) => {
@@ -106,10 +123,10 @@ const LMNotifications = ({ activeSubSection }: LMNotificationsProps) => {
                   <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleAction("view", notification.title)}>
                     <Eye className="w-4 h-4" />
                   </Button>
-                  <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleAction("action", notification.title)}>
+                  <Button size="icon" variant="ghost" className="h-8 w-8" disabled={updateRecord.isPending} onClick={() => updateNotification(notification, "under_review", "Notification Assigned")}>
                     <Check className="w-4 h-4" />
                   </Button>
-                  <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleAction("dismiss", notification.title)}>
+                  <Button size="icon" variant="ghost" className="h-8 w-8" disabled={updateRecord.isPending} onClick={() => updateNotification(notification, "dismissed", "Notification Dismissed")}>
                     <X className="w-4 h-4" />
                   </Button>
                 </div>
