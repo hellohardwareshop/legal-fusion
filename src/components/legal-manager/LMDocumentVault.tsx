@@ -10,7 +10,7 @@ import { Lock, FileText, Upload, Download, Eye, Shield, Calendar } from 'lucide-
 import { toast } from 'sonner';
 
 import { supabase } from '@/integrations/supabase/client';
-import { useLegalDocuments, useUpsertDocument } from '@/lib/legal-data';
+import { useLegalDocuments, useLogAction, useUpsertDocument } from '@/lib/legal-data';
 import { motion } from 'framer-motion';
 
 interface VaultDocument {
@@ -34,6 +34,7 @@ const LMDocumentVault: React.FC = () => {
   const [accessLevel, setAccessLevel] = useState('');
   const { data: documentRows = [], isLoading } = useLegalDocuments();
   const uploadDocument = useUpsertDocument();
+  const logAction = useLogAction();
 
   const documents: VaultDocument[] = documentRows.map((row) => ({
     id: row.id,
@@ -107,6 +108,7 @@ const LMDocumentVault: React.FC = () => {
         storage_path: storagePath,
       });
     } catch (error) {
+      await supabase.storage.from('legal-documents').remove([storagePath]);
       toast.error(error instanceof Error ? error.message : 'Could not save document');
       return;
     }
@@ -118,7 +120,7 @@ const LMDocumentVault: React.FC = () => {
     setAccessLevel('');
   };
 
-  const handleDownload = async (doc: VaultDocument) => {
+  const openDocument = async (doc: VaultDocument, disposition: 'view' | 'download') => {
     if (!doc.storagePath) {
       toast.error('No file is attached to this record yet');
       return;
@@ -131,6 +133,12 @@ const LMDocumentVault: React.FC = () => {
       return;
     }
     window.open(data.signedUrl, '_blank', 'noopener,noreferrer');
+    logAction.mutate({
+      action: disposition === 'view' ? 'Document Viewed' : 'Document Downloaded',
+      category: 'document',
+      actor: 'LM-A1B2',
+      details: `${disposition === 'view' ? 'Viewed' : 'Downloaded'} ${doc.name}`,
+    });
   };
 
   return (
@@ -202,7 +210,7 @@ const LMDocumentVault: React.FC = () => {
 
               <div className="flex justify-end gap-2 pt-4">
                 <Button variant="outline" onClick={() => setIsUploadOpen(false)}>Cancel</Button>
-                <Button onClick={handleUpload}>Upload & Encrypt</Button>
+                <Button onClick={handleUpload} disabled={uploadDocument.isPending}>Upload & Encrypt</Button>
               </div>
             </div>
           </DialogContent>
@@ -257,14 +265,14 @@ const LMDocumentVault: React.FC = () => {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button size="sm" variant="outline" className="gap-1">
+                  <Button size="sm" variant="outline" className="gap-1" onClick={() => openDocument(doc, 'view')}>
                     <Eye className="h-3 w-3" />
                     View
                   </Button>
                   <Button 
                     size="sm" 
                     variant="secondary"
-                    onClick={() => handleDownload(doc)}
+                    onClick={() => openDocument(doc, 'download')}
                     className="gap-1"
                   >
                     <Download className="h-3 w-3" />

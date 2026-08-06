@@ -38,18 +38,16 @@ export const askLegalAI = createServerFn({ method: "POST" })
       data.context ?? {},
     );
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/responses", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${apiKey}`,
+        "Lovable-API-Key": apiKey,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: userPrompt },
-        ],
+        model: "openai/gpt-5.6-sol",
+        instructions: systemPrompt,
+        input: userPrompt,
       }),
     });
 
@@ -65,8 +63,13 @@ export const askLegalAI = createServerFn({ method: "POST" })
     }
 
     const payload = (await response.json()) as {
-      choices?: Array<{ message?: { content?: string } }>;
+      output_text?: string;
+      output?: Array<{ content?: Array<{ type?: string; text?: string }> }>;
     };
-    const result = payload.choices?.[0]?.message?.content ?? null;
+    const result = payload.output_text ?? payload.output
+      ?.flatMap((item) => item.content ?? [])
+      .filter((item) => item.type === "output_text")
+      .map((item) => item.text ?? "")
+      .join("") || null;
     return { result, error: result ? null : "Empty AI response" };
   });
