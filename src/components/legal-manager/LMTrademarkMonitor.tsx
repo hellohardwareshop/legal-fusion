@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Shield, Image, AlertTriangle, CheckCircle, Eye, Brain } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { useMisuseAlerts, useTrademarkAssets } from '@/lib/legal-data';
+import { useLogAction, useMisuseAlerts, useTrademarkAssets } from '@/lib/legal-data';
 import { motion } from 'framer-motion';
 
 interface TrademarkAsset {
@@ -34,6 +34,7 @@ interface MisuseAlert {
 const LMTrademarkMonitor: React.FC = () => {
   const { data: assetRows = [] } = useTrademarkAssets();
   const { data: misuseRows = [] } = useMisuseAlerts();
+  const logAction = useLogAction();
 
   const assets: TrademarkAsset[] = assetRows.map((row) => ({
     id: row.ref_code,
@@ -73,23 +74,33 @@ const LMTrademarkMonitor: React.FC = () => {
   };
 
   const handleInvestigate = (misuse: MisuseAlert) => {
-    console.log('[LEGAL_MANAGER] Trademark misuse investigated:', {
-      timestamp: new Date().toISOString(),
-      action: 'misuse_investigated',
-      misuseId: misuse.id,
-      assetId: misuse.assetId
-    });
-    toast.info('Investigation logged');
+    logAction.mutate(
+      {
+        action: 'Trademark Misuse Investigation Opened',
+        category: 'trademark',
+        actor: 'LM-A1B2',
+        details: `${misuse.id} for ${misuse.assetName} (${misuse.assetId}) was opened for investigation`,
+      },
+      {
+        onSuccess: () => toast.info('Investigation logged'),
+        onError: (error) => toast.error(error.message),
+      },
+    );
   };
 
   const handleRecommendAction = (misuse: MisuseAlert) => {
-    console.log('[LEGAL_MANAGER] Trademark action recommended:', {
-      timestamp: new Date().toISOString(),
-      action: 'action_recommended',
-      misuseId: misuse.id,
-      recommendation: 'Takedown notice'
-    });
-    toast.success('Action recommended to Admin');
+    logAction.mutate(
+      {
+        action: 'Trademark Takedown Recommended',
+        category: 'trademark',
+        actor: 'LM-A1B2',
+        details: `Takedown notice recommended for ${misuse.id}, detected at ${misuse.detectedIn}`,
+      },
+      {
+        onSuccess: () => toast.success('Action recommended to Admin'),
+        onError: (error) => toast.error(error.message),
+      },
+    );
   };
 
   return (
@@ -181,6 +192,7 @@ const LMTrademarkMonitor: React.FC = () => {
                       size="sm" 
                       variant="outline"
                       onClick={() => handleInvestigate(misuse)}
+                      disabled={logAction.isPending}
                       className="gap-1"
                     >
                       <Eye className="h-3 w-3" />
@@ -189,6 +201,7 @@ const LMTrademarkMonitor: React.FC = () => {
                     <Button 
                       size="sm"
                       onClick={() => handleRecommendAction(misuse)}
+                      disabled={logAction.isPending}
                       className="gap-1"
                     >
                       <AlertTriangle className="h-3 w-3" />

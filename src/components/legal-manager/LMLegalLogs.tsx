@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -6,7 +6,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { History, Lock, FileDown, Filter } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { useLegalLogs } from '@/lib/legal-data';
+import { useLegalLogs, useLogAction } from '@/lib/legal-data';
 import { motion } from 'framer-motion';
 
 interface LegalLog {
@@ -22,6 +22,8 @@ interface LegalLog {
 
 const LMLegalLogs: React.FC = () => {
   const { data: logRows = [] } = useLegalLogs();
+  const logAction = useLogAction();
+  const [filterActive, setFilterActive] = useState(false);
 
   const logs: LegalLog[] = logRows.map((row) => ({
     id: row.ref_code,
@@ -45,13 +47,42 @@ const LMLegalLogs: React.FC = () => {
     }
   };
 
-  const handleExportPDF = () => {
-    console.log('[LEGAL_MANAGER] Log export requested:', {
-      timestamp: new Date().toISOString(),
-      action: 'log_export',
-      format: 'PDF'
-    });
-    toast.success('Legal logs exported to PDF');
+  const visibleLogs = useMemo(
+    () => filterActive ? logs.filter((log) => ['violation', 'escalation', 'ai_flag'].includes(log.category)) : logs,
+    [filterActive, logs],
+  );
+
+  const handleExportPDF = async () => {
+    try {
+      const { jsPDF } = await import('jspdf');
+      const pdf = new jsPDF({ unit: 'pt', format: 'a4' });
+      pdf.setFontSize(16);
+      pdf.text('Software Vala — Legal Activity Logs', 40, 44);
+      pdf.setFontSize(9);
+      let y = 70;
+      for (const log of visibleLogs) {
+        const lines = pdf.splitTextToSize(
+          `${new Date(log.timestamp).toLocaleString()} | ${log.id} | ${log.category}\n${log.action} — ${log.details} (${log.actor})`,
+          515,
+        );
+        if (y + lines.length * 12 > 790) {
+          pdf.addPage();
+          y = 40;
+        }
+        pdf.text(lines, 40, y);
+        y += lines.length * 12 + 10;
+      }
+      pdf.save(`legal-activity-${new Date().toISOString().slice(0, 10)}.pdf`);
+      logAction.mutate({
+        action: 'Legal Log Exported',
+        category: 'audit',
+        actor: 'LM-A1B2',
+        details: `${visibleLogs.length} legal activity entries exported to PDF`,
+      });
+      toast.success('Legal logs exported to PDF');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Unable to export legal logs');
+    }
   };
 
   return (
@@ -66,7 +97,7 @@ const LMLegalLogs: React.FC = () => {
           </Badge>
         </CardTitle>
         <div className="flex gap-2">
-          <Button size="sm" variant="outline" className="gap-1">
+          <Button size="sm" variant={filterActive ? 'secondary' : 'outline'} className="gap-1" onClick={() => setFilterActive((value) => !value)}>
             <Filter className="h-4 w-4" />
             Filter
           </Button>
@@ -79,7 +110,7 @@ const LMLegalLogs: React.FC = () => {
       <CardContent>
         <ScrollArea className="h-[400px] pr-4">
           <div className="space-y-2">
-            {logs.map((log, index) => (
+            {visibleLogs.map((log, index) => (
               <motion.div
                 key={log.id}
                 initial={{ opacity: 0, x: -10 }}

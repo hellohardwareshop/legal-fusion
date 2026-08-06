@@ -20,6 +20,7 @@ interface PolicyDocument {
   lastUpdated: string;
   updatedBy: string;
   complianceScore: number;
+  content: string;
   rowId?: string;
 }
 
@@ -37,6 +38,7 @@ const LMPolicyCompliance: React.FC = () => {
     lastUpdated: row.last_updated,
     updatedBy: row.updated_by,
     complianceScore: row.compliance_score,
+    content: row.content ?? '',
     rowId: row.id,
   }));
 
@@ -67,30 +69,32 @@ const LMPolicyCompliance: React.FC = () => {
       return;
     }
 
-    console.log('[LEGAL_MANAGER] Policy draft saved:', {
-      timestamp: new Date().toISOString(),
-      action: 'policy_draft_saved',
-      policyId: selectedPolicy?.id,
-      newVersion: `${selectedPolicy?.version}-draft`
-    });
-
-    toast.success('Draft saved. Awaiting Admin approval for publishing.');
-    setIsEditOpen(false);
-    setDraftContent('');
+    if (!selectedPolicy?.rowId) return;
+    updatePolicy.mutate(
+      { id: selectedPolicy.rowId, status: 'draft', content: draftContent },
+      {
+        onSuccess: () => {
+          toast.success('Draft saved. Awaiting Admin approval for publishing.');
+          setIsEditOpen(false);
+          setDraftContent('');
+        },
+        onError: (error) => toast.error(error.message),
+      },
+    );
   };
 
   const handleSubmitForApproval = () => {
-    if (!selectedPolicy) return;
-
-    console.log('[LEGAL_MANAGER] Policy submitted for approval:', {
-      timestamp: new Date().toISOString(),
-      action: 'policy_submitted',
-      policyId: selectedPolicy.id,
-      version: selectedPolicy.version
-    });
-
-    toast.success('Policy submitted to Admin for approval');
-    setIsEditOpen(false);
+    if (!selectedPolicy?.rowId) return;
+    updatePolicy.mutate(
+      { id: selectedPolicy.rowId, status: 'pending_approval', content: draftContent || selectedPolicy.content },
+      {
+        onSuccess: () => {
+          toast.success('Policy submitted to Admin for approval');
+          setIsEditOpen(false);
+        },
+        onError: (error) => toast.error(error.message),
+      },
+    );
   };
 
   return (
@@ -149,6 +153,7 @@ const LMPolicyCompliance: React.FC = () => {
                         variant="secondary"
                         onClick={() => {
                           setSelectedPolicy(policy);
+                          setDraftContent(policy.content);
                           setIsEditOpen(true);
                         }}
                         className="gap-1"
@@ -195,8 +200,8 @@ const LMPolicyCompliance: React.FC = () => {
 
             <div className="flex justify-end gap-2 pt-4">
               <Button variant="outline" onClick={() => setIsEditOpen(false)}>Cancel</Button>
-              <Button variant="secondary" onClick={handleSaveDraft}>Save Draft</Button>
-              <Button onClick={handleSubmitForApproval}>Submit for Approval</Button>
+              <Button variant="secondary" onClick={handleSaveDraft} disabled={updatePolicy.isPending}>Save Draft</Button>
+              <Button onClick={handleSubmitForApproval} disabled={updatePolicy.isPending}>Submit for Approval</Button>
             </div>
           </div>
         </DialogContent>
