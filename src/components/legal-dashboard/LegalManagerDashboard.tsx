@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useLegalAlerts, useLegalViolations } from "@/lib/legal-data";
 
 // Import screens
 import LegalOverview from "./screens/LegalOverview";
@@ -45,7 +46,15 @@ const sidebarItems = [
 
 const LegalManagerDashboard = () => {
   const [activeScreen, setActiveScreen] = useState("overview");
-  const [complianceStatus, setComplianceStatus] = useState<"Clear" | "Warning" | "Critical">("Clear");
+  const { data: alerts = [] } = useLegalAlerts();
+  const { data: violations = [] } = useLegalViolations();
+  const complianceStatus: "Clear" | "Warning" | "Critical" =
+    alerts.some((alert) => alert.status !== "reviewed" && alert.severity === "critical") ||
+    violations.some((violation) => violation.status !== "resolved" && violation.severity === "critical")
+      ? "Critical"
+      : alerts.some((alert) => alert.status !== "reviewed") || violations.some((violation) => violation.status !== "resolved")
+        ? "Warning"
+        : "Clear";
   const navigate = useNavigate();
 
   useEffect(() => {

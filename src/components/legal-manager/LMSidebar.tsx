@@ -273,7 +273,7 @@ const LMSidebar = ({ activeSection, setActiveSection, onBack }: LMSidebarProps) 
           </Avatar>
           <div className="flex-1 min-w-0">
             <h2 className="text-sm font-semibold text-white truncate">Legal Manager</h2>
-            <p className="text-xs text-rose-400/70 font-mono">LGL-XXXX</p>
+            <p className="text-xs text-rose-400/70">Software Vala workspace</p>
           </div>
         </div>
 
@@ -307,7 +307,7 @@ const LMSidebar = ({ activeSection, setActiveSection, onBack }: LMSidebarProps) 
         >
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs text-emerald-400 font-medium">AI Mode: 99% | Human: 1%</span>
+            <span className="text-xs text-emerald-400 font-medium">AI assistance active · Human approval required</span>
           </div>
         </motion.div>
       </div>

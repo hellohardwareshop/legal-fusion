@@ -49,6 +49,20 @@ const LMNotifications = ({ activeSubSection }: LMNotificationsProps) => {
     }
   };
 
+  const notificationGroups = [
+    { icon: Clock, label: "Expiry Alerts", terms: ["expiry", "expire"] },
+    { icon: AlertTriangle, label: "Violations", terms: ["violation", "breach"] },
+    { icon: Users, label: "Pending", terms: ["pending", "acceptance"] },
+    { icon: FileText, label: "Policy Changes", terms: ["policy", "change"] },
+  ].map((group) => ({
+    ...group,
+    count: notifications.filter((item) => {
+      const searchable = `${item.title ?? item.name} ${item.message ?? ""} ${item.type ?? ""}`.toLowerCase();
+      return group.terms.some((term) => searchable.includes(term));
+    }).length,
+    onClick: () => handleAction("view", group.label),
+  }));
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
@@ -64,12 +78,7 @@ const LMNotifications = ({ activeSubSection }: LMNotificationsProps) => {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[
-          { icon: Clock, label: "Expiry Alerts", count: 2, onClick: () => handleAction("view", "Expiry Alerts") },
-          { icon: AlertTriangle, label: "Violations", count: 1, onClick: () => handleAction("view", "Violation Alerts") },
-          { icon: Users, label: "Pending", count: 1, onClick: () => handleAction("view", "Pending Acceptances") },
-          { icon: FileText, label: "Policy Changes", count: 1, onClick: () => handleAction("view", "Policy Change Alerts") },
-        ].map((action, index) => (
+        {notificationGroups.map((action, index) => (
           <motion.div
             key={action.label}
             initial={{ opacity: 0, y: 20 }}

@@ -70,7 +70,7 @@ const LMAILegalIntelligence = ({ activeSubSection }: LMAILegalIntelligenceProps)
           <h1 className="text-2xl font-bold text-foreground">AI Legal Intelligence</h1>
           <p className="text-muted-foreground">AI-powered legal analysis and automation</p>
         </div>
-        <Badge className="bg-pink-500/20 text-pink-400 border-pink-500/50 ml-auto">AI MODE: 99%</Badge>
+        <Badge className="bg-pink-500/20 text-pink-400 border-pink-500/50 ml-auto">HUMAN REVIEW REQUIRED</Badge>
       </div>
 
       {/* Quick Actions */}
