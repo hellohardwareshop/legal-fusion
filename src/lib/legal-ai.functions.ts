@@ -66,10 +66,12 @@ export const askLegalAI = createServerFn({ method: "POST" })
       output_text?: string;
       output?: Array<{ content?: Array<{ type?: string; text?: string }> }>;
     };
-    const result = payload.output_text ?? payload.output
-      ?.flatMap((item) => item.content ?? [])
-      .filter((item) => item.type === "output_text")
-      .map((item) => item.text ?? "")
-      .join("") || null;
+    const result = payload.output_text ?? (
+      payload.output
+        ?.flatMap((item) => item.content ?? [])
+        .filter((item) => item.type === "output_text")
+        .map((item) => item.text ?? "")
+        .join("") || null
+    );
     return { result, error: result ? null : "Empty AI response" };
   });
