@@ -119,14 +119,14 @@ const LMEnterpriseLayout = ({ onBack }: LMEnterpriseLayoutProps) => {
   };
 
   return (
-    <div className="flex h-full bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <div className="flex h-screen overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
       <LMSidebar
         activeSection={activeSection}
         setActiveSection={setActiveSection}
         onBack={onBack}
       />
       
-      <div className="flex-1 overflow-auto">
+      <div className="min-w-0 flex-1 overflow-auto">
         <motion.div
           key={activeSection}
           initial={{ opacity: 0, y: 10 }}

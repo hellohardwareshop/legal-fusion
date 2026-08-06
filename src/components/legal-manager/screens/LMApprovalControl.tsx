@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { CheckCircle, Brain, UserCheck, Crown, Lock, Upload, Eye, Edit, History, XCircle } from "lucide-react";
 import { toast } from "sonner";
 
-import { useLegalRecords } from "@/lib/legal-data";
+import { useLegalRecords, useUpdateRecordStatus } from "@/lib/legal-data";
 
 interface LMApprovalControlProps {
   activeSubSection: string;
@@ -14,6 +14,7 @@ interface LMApprovalControlProps {
 
 const LMApprovalControl = ({ activeSubSection }: LMApprovalControlProps) => {
   const { data: approvalItems = [] } = useLegalRecords("approval");
+  const updateRecord = useUpdateRecordStatus();
   const handleAction = (action: string, item: string) => {
     const toastMap: Record<string, () => void> = {
       view: () => toast.info(`Viewing: ${item}`),
@@ -25,6 +26,22 @@ const LMApprovalControl = ({ activeSubSection }: LMApprovalControlProps) => {
       history: () => toast.info(`Viewing history: ${item}`),
     };
     toastMap[action]?.();
+  };
+
+  const updateApproval = (item: (typeof approvalItems)[number], status: string, action: string) => {
+    updateRecord.mutate(
+      {
+        id: item.id,
+        category: "approval",
+        status,
+        action,
+        details: `${item.name} set to ${status}`,
+      },
+      {
+        onSuccess: () => toast.success(`${action}: ${item.name}`),
+        onError: (error) => toast.error(error.message),
+      },
+    );
   };
 
   return (
@@ -108,13 +125,13 @@ const LMApprovalControl = ({ activeSubSection }: LMApprovalControlProps) => {
                     <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleAction("view", item.name)}>
                       <Eye className="w-4 h-4" />
                     </Button>
-                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleAction("approve", item.name)}>
+                    <Button size="icon" variant="ghost" className="h-8 w-8" disabled={updateRecord.isPending} onClick={() => updateApproval(item, "approved", "Approval Granted")}>
                       <CheckCircle className="w-4 h-4" />
                     </Button>
-                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleAction("reject", item.name)}>
+                    <Button size="icon" variant="ghost" className="h-8 w-8" disabled={updateRecord.isPending} onClick={() => updateApproval(item, "rejected", "Approval Rejected")}>
                       <XCircle className="w-4 h-4" />
                     </Button>
-                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleAction("lock", item.name)}>
+                    <Button size="icon" variant="ghost" className="h-8 w-8" disabled={updateRecord.isPending} onClick={() => updateApproval(item, "locked", "Approval Locked")}>
                       <Lock className="w-4 h-4" />
                     </Button>
                     <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleAction("history", item.name)}>

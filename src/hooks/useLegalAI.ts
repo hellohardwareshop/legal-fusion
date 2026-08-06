@@ -48,6 +48,9 @@ export const useLegalAI = () => {
 
   const reviewNDA = (ndaText: string) => callLegalAI("nda_review", ndaText);
 
+  const disputeGuide = (disputeDescription: string) =>
+    callLegalAI("dispute_guide", disputeDescription);
+
   return {
     isLoading,
     callLegalAI,
@@ -57,5 +60,6 @@ export const useLegalAI = () => {
     analyzeRisk,
     suggestClauses,
     reviewNDA,
+    disputeGuide,
   };
 };

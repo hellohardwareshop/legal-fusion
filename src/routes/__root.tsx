@@ -80,12 +80,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Legal Manager — Software Vala" },
       { name: "description", content: "Enterprise legal, compliance and IP command center." },
-      { name: "author", content: "Lovable" },
+      { name: "author", content: "Software Vala" },
       { property: "og:title", content: "Legal Manager — Software Vala" },
       { property: "og:description", content: "Enterprise legal, compliance and IP command center." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {

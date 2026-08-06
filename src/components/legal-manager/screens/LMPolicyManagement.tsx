@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { FileText, Shield, ScrollText, RefreshCw, Brain, Database, Eye, Edit, Lock, CheckCircle, History } from "lucide-react";
 import { toast } from "sonner";
 
-import { useLegalRecords } from "@/lib/legal-data";
+import { useLegalRecords, useUpdateRecordStatus } from "@/lib/legal-data";
 
 interface LMPolicyManagementProps {
   activeSubSection: string;
@@ -14,6 +14,7 @@ interface LMPolicyManagementProps {
 
 const LMPolicyManagement = ({ activeSubSection }: LMPolicyManagementProps) => {
   const { data: policies = [] } = useLegalRecords("policy");
+  const updateRecord = useUpdateRecordStatus();
   const handleAction = (action: string, item: string) => {
     const toastMap: Record<string, () => void> = {
       view: () => toast.info(`Viewing: ${item}`),
@@ -24,6 +25,22 @@ const LMPolicyManagement = ({ activeSubSection }: LMPolicyManagementProps) => {
       history: () => toast.info(`Viewing history: ${item}`),
     };
     toastMap[action]?.();
+  };
+
+  const updatePolicyStatus = (policy: (typeof policies)[number], status: string, action: string) => {
+    updateRecord.mutate(
+      {
+        id: policy.id,
+        category: "policy",
+        status,
+        action,
+        details: `${policy.name} set to ${status}`,
+      },
+      {
+        onSuccess: () => toast.success(`${action}: ${policy.name}`),
+        onError: (error) => toast.error(error.message),
+      },
+    );
   };
 
   return (
@@ -105,10 +122,10 @@ const LMPolicyManagement = ({ activeSubSection }: LMPolicyManagementProps) => {
                     <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleAction("edit", policy.name)}>
                       <Edit className="w-4 h-4" />
                     </Button>
-                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleAction("lock", policy.name)}>
+                    <Button size="icon" variant="ghost" className="h-8 w-8" disabled={updateRecord.isPending} onClick={() => updatePolicyStatus(policy, "locked", "Policy Locked")}>
                       <Lock className="w-4 h-4" />
                     </Button>
-                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleAction("publish", policy.name)}>
+                    <Button size="icon" variant="ghost" className="h-8 w-8" disabled={updateRecord.isPending} onClick={() => updatePolicyStatus(policy, "published", "Policy Published")}>
                       <CheckCircle className="w-4 h-4" />
                     </Button>
                     <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleAction("history", policy.name)}>
