@@ -3,29 +3,23 @@ import { z } from "zod";
 
 import type { LegalAIType } from "./legal-ai.server";
 
-const inputSchema = z.object({
-  type: z
-    .enum([
+export const askLegalAI = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => z.object({
+    type: z.enum([
       "legal_chat",
       "contract_draft",
       "compliance_check",
       "risk_analysis",
       "clause_suggest",
       "nda_review",
-    ])
-    .default("legal_chat"),
-  prompt: z.string().min(1).max(8000),
-  context: z
-    .object({
+    ]).default("legal_chat"),
+    prompt: z.string().min(1).max(8000),
+    context: z.object({
       jurisdiction: z.string().max(120).optional(),
       contractType: z.string().max(120).optional(),
       context: z.string().max(500).optional(),
-    })
-    .optional(),
-});
-
-export const askLegalAI = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => inputSchema.parse(data))
+    }).optional(),
+  }).parse(data))
   .handler(async ({ data }) => {
     const apiKey = process.env["LOVABLE_API_KEY"];
     if (!apiKey) {
