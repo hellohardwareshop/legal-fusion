@@ -4,7 +4,8 @@ export type LegalAIType =
   | "compliance_check"
   | "risk_analysis"
   | "clause_suggest"
-  | "nda_review";
+  | "nda_review"
+  | "dispute_guide";
 
 export interface LegalAIContext {
   jurisdiction?: string;
@@ -69,6 +70,11 @@ Provide 3-5 clause suggestions with explanations of when each should be used.`,
 
 Provide detailed analysis with recommendations.`,
         userPrompt: `Review this NDA: ${prompt}`,
+      };
+    case "dispute_guide":
+      return {
+        systemPrompt: `You are an AI Dispute Resolution Advisor. Provide practical, neutral guidance covering initial assessment, negotiation, mediation, arbitration and litigation options, settlement strategy, required documentation, likely timelines, risks and when qualified legal counsel is required. Do not present the response as a substitute for professional legal advice.`,
+        userPrompt: `Provide a structured dispute-resolution guide for: ${prompt}`,
       };
     case "legal_chat":
     default:
