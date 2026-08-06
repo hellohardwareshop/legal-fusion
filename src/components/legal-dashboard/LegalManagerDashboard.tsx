@@ -143,7 +143,7 @@ const LegalManagerDashboard = () => {
       {/* Main Content Area */}
       <div className="min-w-0 flex-1 ml-64 flex flex-col">
         {/* Fixed Top Header */}
-        <header className="h-16 bg-slate-900/80 border-b border-slate-700/50 flex items-center justify-between px-6 fixed top-0 right-0 left-64 z-10">
+        <header className="h-16 bg-slate-900/80 border-b border-slate-700/50 flex items-center justify-between px-6 fixed top-0 right-0 left-0 z-10">
           <h2 className="text-lg font-semibold text-white">
             Legal Manager — Compliance Center
           </h2>

@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
-import { buildLegalPrompts, type LegalAIType } from "./legal-ai.server";
+import type { LegalAIType } from "./legal-ai.server";
 
 const inputSchema = z.object({
   type: z
@@ -32,6 +32,7 @@ export const askLegalAI = createServerFn({ method: "POST" })
       return { result: null, error: "AI service is not configured" };
     }
 
+    const { buildLegalPrompts } = await import("./legal-ai.server");
     const { systemPrompt, userPrompt } = buildLegalPrompts(
       data.type as LegalAIType,
       data.prompt,

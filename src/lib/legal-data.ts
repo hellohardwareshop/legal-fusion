@@ -141,11 +141,12 @@ async function appendLog(entry: {
   actor: string;
   details: string;
 }) {
-  await supabase.from("legal_logs").insert({
+  const { error } = await supabase.from("legal_logs").insert({
     ref_code: `LOG-${Date.now().toString(36).toUpperCase()}`,
     immutable: true,
     ...entry,
   });
+  if (error) throw error;
 }
 
 export function useLogAction() {
