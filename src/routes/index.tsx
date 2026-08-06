@@ -17,6 +17,8 @@ export const Route = createFileRoute("/")({
         content:
           "Enterprise legal command center: agreements, policies, trademarks, copyrights, compliance and audit logs.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: LegalManagerModule,
