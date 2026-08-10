@@ -29,7 +29,7 @@ const LMInternationalLaw = ({ activeSubSection }: LMInternationalLawProps) => {
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-600 to-cyan-800 flex items-center justify-center shadow-lg">
-          <Globe className="w-7 h-7 text-white" />
+          <Globe className="w-7 h-7 text-primary-foreground" />
         </div>
         <div>
           <h1 className="text-2xl font-bold text-foreground">International Law Compliance</h1>

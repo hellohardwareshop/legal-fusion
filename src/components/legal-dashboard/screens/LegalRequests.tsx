@@ -82,7 +82,7 @@ const LegalRequests = () => {
       className="space-y-6"
     >
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold text-white">Legal Requests</h2>
+        <h2 className="text-xl font-semibold text-primary-foreground">Legal Requests</h2>
         <Badge className="bg-amber-500/20 text-amber-400">{pendingCount} Pending</Badge>
       </div>
 
@@ -107,7 +107,7 @@ const LegalRequests = () => {
                 <TableRow key={request.id} className="border-border">
                   <TableCell className="text-amber-400 font-mono">{request.ref_code}</TableCell>
                   <TableCell className="text-foreground font-mono text-sm">{request.raisedBy}</TableCell>
-                  <TableCell className="text-white">{request.type || request.name}</TableCell>
+                  <TableCell className="text-primary-foreground">{request.type || request.name}</TableCell>
                   <TableCell>
                     <Badge className={getPriorityColor(request.priority)}>{request.priority}</Badge>
                   </TableCell>

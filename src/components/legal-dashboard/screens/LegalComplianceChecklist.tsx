@@ -74,7 +74,7 @@ const LegalComplianceChecklist = () => {
             <div className="flex items-center gap-3">
               {getStatusIcon(item.status)}
               <div>
-                <p className="text-white text-sm">{item.name}</p>
+                <p className="text-primary-foreground text-sm">{item.name}</p>
                 <p className="text-muted-foreground text-xs">Last review: {item.lastReview}</p>
               </div>
             </div>
@@ -105,7 +105,7 @@ const LegalComplianceChecklist = () => {
       animate={{ opacity: 1, y: 0 }}
       className="space-y-6"
     >
-      <h2 className="text-xl font-semibold text-white">Compliance Checklist</h2>
+      <h2 className="text-xl font-semibold text-primary-foreground">Compliance Checklist</h2>
 
       {renderChecklist(gdprItems, "compliance_gdpr", <Shield className="h-5 w-5" />, "GDPR / Local Law Status")}
       {renderChecklist(kycItems, "compliance_kyc", <UserCheck className="h-5 w-5" />, "KYC / AML Checks")}

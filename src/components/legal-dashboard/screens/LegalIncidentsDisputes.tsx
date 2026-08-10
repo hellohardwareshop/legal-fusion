@@ -81,7 +81,7 @@ const LegalIncidentsDisputes = () => {
       className="space-y-6"
     >
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold text-white">Incidents & Disputes</h2>
+        <h2 className="text-xl font-semibold text-primary-foreground">Incidents & Disputes</h2>
         <div className="flex gap-2">
           <Badge className="bg-red-500/20 text-red-400">{criticalCount} Critical</Badge>
           <Badge className="bg-blue-500/20 text-blue-400">{investigatingCount} Investigating</Badge>
@@ -108,7 +108,7 @@ const LegalIncidentsDisputes = () => {
               {incidents.map((incident) => (
                 <TableRow key={incident.id} className="border-border">
                   <TableCell className="text-amber-400 font-mono">{incident.ref_code}</TableCell>
-                  <TableCell className="text-white">{incident.type || incident.name}</TableCell>
+                  <TableCell className="text-primary-foreground">{incident.type || incident.name}</TableCell>
                   <TableCell className="text-foreground">{incident.parties}</TableCell>
                   <TableCell>
                     <Badge className={getSeverityColor(incident.severity)}>{incident.severity}</Badge>

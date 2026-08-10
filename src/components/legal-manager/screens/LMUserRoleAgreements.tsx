@@ -49,7 +49,7 @@ const LMUserRoleAgreements = ({ activeSubSection }: LMUserRoleAgreementsProps) =
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center shadow-lg">
-          <Users className="w-7 h-7 text-white" />
+          <Users className="w-7 h-7 text-primary-foreground" />
         </div>
         <div>
           <h1 className="text-2xl font-bold text-foreground">User & Role Agreements</h1>

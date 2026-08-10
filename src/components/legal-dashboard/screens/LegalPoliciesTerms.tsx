@@ -44,7 +44,7 @@ const LegalPoliciesTerms = () => {
       animate={{ opacity: 1, y: 0 }}
       className="space-y-6"
     >
-      <h2 className="text-xl font-semibold text-white">Policies & Terms</h2>
+      <h2 className="text-xl font-semibold text-primary-foreground">Policies & Terms</h2>
 
       <Card className="bg-card/50 border-border">
         <CardHeader>
@@ -65,7 +65,7 @@ const LegalPoliciesTerms = () => {
             <TableBody>
               {policies.map((policy) => (
                 <TableRow key={policy.id} className="border-border">
-                  <TableCell className="text-white font-medium">{policy.name}</TableCell>
+                  <TableCell className="text-primary-foreground font-medium">{policy.name}</TableCell>
                   <TableCell className="text-foreground">{policy.version}</TableCell>
                   <TableCell className="text-foreground">{policy.region}</TableCell>
                   <TableCell>

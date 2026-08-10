@@ -30,7 +30,7 @@ const LMLoginGateControl = ({ activeSubSection }: LMLoginGateControlProps) => {
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-red-600 to-red-800 flex items-center justify-center shadow-lg">
-          <DoorOpen className="w-7 h-7 text-white" />
+          <DoorOpen className="w-7 h-7 text-primary-foreground" />
         </div>
         <div>
           <h1 className="text-2xl font-bold text-foreground">Login Gate Control</h1>

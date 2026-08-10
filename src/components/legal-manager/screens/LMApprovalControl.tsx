@@ -48,7 +48,7 @@ const LMApprovalControl = ({ activeSubSection }: LMApprovalControlProps) => {
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-600 to-green-800 flex items-center justify-center shadow-lg">
-          <CheckCircle className="w-7 h-7 text-white" />
+          <CheckCircle className="w-7 h-7 text-primary-foreground" />
         </div>
         <div>
           <h1 className="text-2xl font-bold text-foreground">Approval & Control</h1>

@@ -31,7 +31,7 @@ const LMProductLegalBinding = ({ activeSubSection }: LMProductLegalBindingProps)
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center shadow-lg">
-          <Package className="w-7 h-7 text-white" />
+          <Package className="w-7 h-7 text-primary-foreground" />
         </div>
         <div>
           <h1 className="text-2xl font-bold text-foreground">Product Legal Binding</h1>

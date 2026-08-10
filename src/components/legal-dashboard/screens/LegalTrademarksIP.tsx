@@ -51,7 +51,7 @@ const LegalTrademarksIP = () => {
       className="space-y-6"
     >
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold text-white">Trademarks & IP</h2>
+        <h2 className="text-xl font-semibold text-primary-foreground">Trademarks & IP</h2>
         <Button onClick={handleAddRecord} className="bg-amber-600 hover:bg-amber-700">
           <Plus className="h-4 w-4 mr-2" />
           Add Record
@@ -68,7 +68,7 @@ const LegalTrademarksIP = () => {
               <div key={tm.id} className="bg-surface/50 border border-border rounded-lg p-4">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="text-lg font-semibold text-white">{tm.name}</h3>
+                    <h3 className="text-lg font-semibold text-primary-foreground">{tm.name}</h3>
                     <p className="text-muted-foreground text-sm">{tm.type}</p>
                     <div className="flex items-center gap-2 mt-2">
                       <Globe className="h-4 w-4 text-muted-foreground" />
@@ -117,7 +117,7 @@ const LegalTrademarksIP = () => {
             {pendingApplications.map((app) => (
               <div key={app.id} className="flex justify-between items-center bg-surface/50 border border-border rounded-lg p-4">
                 <div>
-                  <h4 className="text-white font-medium">{app.name}</h4>
+                  <h4 className="text-primary-foreground font-medium">{app.name}</h4>
                   <p className="text-muted-foreground text-sm">Filed: {app.filed} • Region: {app.region}</p>
                 </div>
                 <Badge className="bg-blue-500/20 text-blue-400">{app.status.replace("_", " ")}</Badge>

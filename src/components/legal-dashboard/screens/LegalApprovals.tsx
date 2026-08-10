@@ -54,7 +54,7 @@ const LegalApprovals = () => {
       className="space-y-6"
     >
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold text-white">Approvals</h2>
+        <h2 className="text-xl font-semibold text-primary-foreground">Approvals</h2>
         <Badge className="bg-yellow-500/20 text-yellow-400">
           {approvals.filter((a) => a.status === "pending").length} Pending
         </Badge>
@@ -78,7 +78,7 @@ const LegalApprovals = () => {
             <TableBody>
               {approvals.map((approval) => (
                 <TableRow key={approval.id} className="border-border">
-                  <TableCell className="text-white font-medium">{approval.name}</TableCell>
+                  <TableCell className="text-primary-foreground font-medium">{approval.name}</TableCell>
                   <TableCell className="text-foreground font-mono text-sm">{approval.requestedBy}</TableCell>
                   <TableCell className="text-foreground">{approval.impact}</TableCell>
                   <TableCell>

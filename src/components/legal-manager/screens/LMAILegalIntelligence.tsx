@@ -64,7 +64,7 @@ const LMAILegalIntelligence = ({ activeSubSection }: LMAILegalIntelligenceProps)
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-600 to-pink-800 flex items-center justify-center shadow-lg">
-          <Brain className="w-7 h-7 text-white" />
+          <Brain className="w-7 h-7 text-primary-foreground" />
         </div>
         <div>
           <h1 className="text-2xl font-bold text-foreground">AI Legal Intelligence</h1>
@@ -170,7 +170,7 @@ const LMAILegalIntelligence = ({ activeSubSection }: LMAILegalIntelligenceProps)
           <Button
             onClick={() => openTask && runAI(openTask)}
             disabled={isLoading}
-            className="bg-pink-600 hover:bg-pink-700 text-white"
+            className="bg-pink-600 hover:bg-pink-700 text-primary-foreground"
           >
             {isLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Brain className="w-4 h-4 mr-2" />}
             {isLoading ? "Analysing..." : "Run AI"}

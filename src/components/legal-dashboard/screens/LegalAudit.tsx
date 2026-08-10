@@ -45,7 +45,7 @@ const LegalAudit = () => {
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
           <Shield className="h-6 w-6 text-amber-400" />
-          <h2 className="text-xl font-semibold text-white">Audit Trail</h2>
+          <h2 className="text-xl font-semibold text-primary-foreground">Audit Trail</h2>
         </div>
         <Badge className="bg-muted text-foreground">Read Only</Badge>
       </div>
@@ -84,7 +84,7 @@ const LegalAudit = () => {
                     <TableCell className="text-foreground font-mono text-sm">
                       {new Date(log.logged_at).toLocaleString("sv-SE").replace("T", " ")}
                     </TableCell>
-                    <TableCell className="text-white">{log.action}</TableCell>
+                    <TableCell className="text-primary-foreground">{log.action}</TableCell>
                     <TableCell className="text-foreground font-mono text-sm">{log.actor}</TableCell>
                     <TableCell className={getResultColor(result)}>{result}</TableCell>
                     <TableCell className={approvalRef === "N/A" ? "text-muted-foreground" : "text-amber-400 font-mono text-sm"}>

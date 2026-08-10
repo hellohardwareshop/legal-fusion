@@ -30,7 +30,7 @@ const LegalReports = () => {
       className="space-y-6"
     >
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold text-white">Legal Reports</h2>
+        <h2 className="text-xl font-semibold text-primary-foreground">Legal Reports</h2>
         <div className="flex items-center gap-2 text-yellow-400 text-sm">
           <AlertTriangle className="h-4 w-4" />
           No export / No copy
@@ -58,7 +58,7 @@ const LegalReports = () => {
                   </div>
                   <div className="bg-surface/50 rounded-lg p-4 text-center">
                     <p className="text-muted-foreground text-sm">Regions Compliant</p>
-                    <p className="text-3xl font-bold text-white mt-2">{regionsCompliant}/{regions.length}</p>
+                    <p className="text-3xl font-bold text-primary-foreground mt-2">{regionsCompliant}/{regions.length}</p>
                   </div>
                   <div className="bg-surface/50 rounded-lg p-4 text-center">
                     <p className="text-muted-foreground text-sm">Pending Reviews</p>
@@ -90,7 +90,7 @@ const LegalReports = () => {
                 <div className="grid grid-cols-4 gap-4">
                   <div className="bg-surface/50 rounded-lg p-4 text-center">
                     <p className="text-muted-foreground text-sm">Total Incidents</p>
-                    <p className="text-2xl font-bold text-white mt-2">{incidents.length}</p>
+                    <p className="text-2xl font-bold text-primary-foreground mt-2">{incidents.length}</p>
                   </div>
                   <div className="bg-surface/50 rounded-lg p-4 text-center">
                     <p className="text-muted-foreground text-sm">Resolved</p>
@@ -108,7 +108,7 @@ const LegalReports = () => {
                 <div className="space-y-3">
                   {incidents.map((incident) => (
                     <div key={incident.id} className="flex justify-between p-3 bg-surface/50 rounded">
-                      <span className="text-white text-sm">{incident.name}</span>
+                      <span className="text-primary-foreground text-sm">{incident.name}</span>
                       <span className="text-muted-foreground text-xs">{incident.status.replace("_", " ")}</span>
                     </div>
                   ))}
@@ -128,7 +128,7 @@ const LegalReports = () => {
                 {risks.map((risk) => (
                   <div key={risk.id} className="bg-surface/50 rounded-lg p-4">
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-white">{risk.name}</span>
+                      <span className="text-primary-foreground">{risk.name}</span>
                       <span className={
                         risk.status === "Low" ? "text-emerald-400" :
                         risk.status === "Medium" ? "text-yellow-400" :

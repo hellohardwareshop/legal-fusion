@@ -47,7 +47,7 @@ const LMPolicyManagement = ({ activeSubSection }: LMPolicyManagementProps) => {
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-violet-600 to-violet-800 flex items-center justify-center shadow-lg">
-          <FileText className="w-7 h-7 text-white" />
+          <FileText className="w-7 h-7 text-primary-foreground" />
         </div>
         <div>
           <h1 className="text-2xl font-bold text-foreground">Policy Management</h1>

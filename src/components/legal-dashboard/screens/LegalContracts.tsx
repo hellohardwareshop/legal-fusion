@@ -54,13 +54,13 @@ const LegalContracts = () => {
       animate={{ opacity: 1, y: 0 }}
       className="space-y-6"
     >
-      <h2 className="text-xl font-semibold text-white">Contracts</h2>
+      <h2 className="text-xl font-semibold text-primary-foreground">Contracts</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card className="bg-card/50 border-border">
           <CardContent className="pt-6 text-center">
             <p className="text-muted-foreground text-sm">Total Contracts</p>
-            <p className="text-3xl font-bold text-white mt-2">{contracts.length}</p>
+            <p className="text-3xl font-bold text-primary-foreground mt-2">{contracts.length}</p>
           </CardContent>
         </Card>
         <Card className="bg-card/50 border-border">
@@ -104,7 +104,7 @@ const LegalContracts = () => {
               {contracts.map((contract) => (
                 <TableRow key={contract.id} className="border-border">
                   <TableCell className="text-amber-400 font-mono">{contract.ref_code}</TableCell>
-                  <TableCell className="text-white">{contract.name}</TableCell>
+                  <TableCell className="text-primary-foreground">{contract.name}</TableCell>
                   <TableCell className="text-foreground">{contract.region}</TableCell>
                   <TableCell className="text-foreground text-sm">{contract.validity}</TableCell>
                   <TableCell>

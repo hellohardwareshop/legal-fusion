@@ -91,7 +91,7 @@ const LegalOverview = () => {
                 <stat.icon className={`h-5 w-5 ${stat.color}`} />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-white">{stat.value}</div>
+                <div className="text-2xl font-bold text-primary-foreground">{stat.value}</div>
                 <p className="text-xs text-muted-foreground mt-1">{stat.trend}</p>
               </CardContent>
             </Card>
@@ -130,7 +130,7 @@ const LegalOverview = () => {
             <div className="space-y-3">
               {alerts.slice(0, 4).map((item) => (
                 <div key={item.id} className="flex justify-between p-3 bg-surface/50 rounded">
-                  <span className="text-white text-sm">{item.title}</span>
+                  <span className="text-primary-foreground text-sm">{item.title}</span>
                   <span className="text-muted-foreground text-xs">{formatAge(item.detected_at)}</span>
                 </div>
               ))}
