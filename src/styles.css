@@ -277,43 +277,45 @@
 
   /* Dark Mode - Premium Dark */
   .dark {
-    --background: 224 71% 8%;
-    --foreground: 220 20% 98%;
+    /* app is dark-first — tokens mirror :root */
+    --background: 216 57% 9%;
+    --foreground: 211 47% 98%;
 
-    --card: 224 71% 11%;
-    --card-foreground: 220 20% 98%;
+    --card: 216 45% 12%;
+    --card-foreground: 211 47% 98%;
 
-    --popover: 224 71% 11%;
-    --popover-foreground: 220 20% 98%;
+    --popover: 216 40% 13%;
+    --popover-foreground: 211 47% 98%;
 
-    --primary: 243 75% 65%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 209 98% 46%;
+    --primary-foreground: 211 100% 99%;
 
-    --secondary: 224 50% 15%;
-    --secondary-foreground: 220 20% 98%;
+    --secondary: 216 30% 18%;
+    --secondary-foreground: 211 47% 98%;
 
-    --muted: 224 50% 15%;
-    --muted-foreground: 220 14% 60%;
+    --muted: 216 29% 16%;
+    --muted-foreground: 214 16% 68%;
 
-    --accent: 258 90% 70%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 214 40% 21%;
+    --accent-foreground: 211 47% 98%;
 
-    --destructive: 0 63% 50%;
-    --destructive-foreground: 220 20% 98%;
+    --destructive: 360 76% 58%;
+    --destructive-foreground: 211 100% 99%;
 
-    --border: 224 50% 18%;
-    --input: 224 50% 18%;
-    --ring: 243 75% 65%;
+    --border: 216 25% 20%;
+    --input: 216 25% 23%;
+    --ring: 209 98% 46%;
 
-    --sidebar-background: 243 75% 55%;
-    --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 0 0% 100%;
-    --sidebar-primary-foreground: 243 75% 55%;
-    --sidebar-accent: 243 75% 45%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 243 60% 60%;
-    --sidebar-ring: 0 0% 100%;
+    --sidebar-background: 216 57% 8%;
+    --sidebar-foreground: 214 16% 78%;
+    --sidebar-primary: 209 98% 46%;
+    --sidebar-primary-foreground: 211 100% 99%;
+    --sidebar-accent: 214 40% 18%;
+    --sidebar-accent-foreground: 211 47% 98%;
+    --sidebar-border: 216 25% 18%;
+    --sidebar-ring: 209 98% 46%;
   }
+
 }
 
 @layer base {
