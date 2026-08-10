@@ -20,6 +20,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useLegalAlerts, useLegalViolations } from "@/lib/legal-data";
+import { PageShell, ModuleHero } from "@/components/layout/PageShell";
 
 // Import screens
 import LegalOverview from "./screens/LegalOverview";
