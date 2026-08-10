@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import LMSidebar from "./LMSidebar";
+import { Scale } from "lucide-react";
+import LMSidebar, { menuItems } from "./LMSidebar";
+import { PageShell, ModuleHero } from "@/components/layout/PageShell";
+
 import LMDashboard from "./screens/LMDashboard";
 import LMAgreementEngine from "./screens/LMAgreementEngine";
 import LMUserRoleAgreements from "./screens/LMUserRoleAgreements";
