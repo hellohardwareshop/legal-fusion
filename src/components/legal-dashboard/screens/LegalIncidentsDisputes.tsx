@@ -19,7 +19,7 @@ const LegalIncidentsDisputes = () => {
       case "high": return "bg-orange-500/20 text-orange-400";
       case "medium": return "bg-yellow-500/20 text-yellow-400";
       case "low": return "bg-blue-500/20 text-blue-400";
-      default: return "bg-slate-500/20 text-slate-400";
+      default: return "bg-muted/20 text-muted-foreground";
     }
   };
 
@@ -29,7 +29,7 @@ const LegalIncidentsDisputes = () => {
       case "pending_action": return "bg-yellow-500/20 text-yellow-400";
       case "resolved": return "bg-emerald-500/20 text-emerald-400";
       case "escalated": return "bg-purple-500/20 text-purple-400";
-      default: return "bg-slate-500/20 text-slate-400";
+      default: return "bg-muted/20 text-muted-foreground";
     }
   };
 
@@ -88,28 +88,28 @@ const LegalIncidentsDisputes = () => {
         </div>
       </div>
 
-      <Card className="bg-slate-900/50 border-slate-700/50">
+      <Card className="bg-card/50 border-border">
         <CardHeader>
           <CardTitle className="text-amber-400">All Cases</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
-              <TableRow className="border-slate-700">
-                <TableHead className="text-slate-400">Case ID</TableHead>
-                <TableHead className="text-slate-400">Type</TableHead>
-                <TableHead className="text-slate-400">Parties</TableHead>
-                <TableHead className="text-slate-400">Severity</TableHead>
-                <TableHead className="text-slate-400">Status</TableHead>
-                <TableHead className="text-slate-400">Actions</TableHead>
+              <TableRow className="border-border">
+                <TableHead className="text-muted-foreground">Case ID</TableHead>
+                <TableHead className="text-muted-foreground">Type</TableHead>
+                <TableHead className="text-muted-foreground">Parties</TableHead>
+                <TableHead className="text-muted-foreground">Severity</TableHead>
+                <TableHead className="text-muted-foreground">Status</TableHead>
+                <TableHead className="text-muted-foreground">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {incidents.map((incident) => (
-                <TableRow key={incident.id} className="border-slate-700/50">
+                <TableRow key={incident.id} className="border-border">
                   <TableCell className="text-amber-400 font-mono">{incident.ref_code}</TableCell>
                   <TableCell className="text-white">{incident.type || incident.name}</TableCell>
-                  <TableCell className="text-slate-300">{incident.parties}</TableCell>
+                  <TableCell className="text-foreground">{incident.parties}</TableCell>
                   <TableCell>
                     <Badge className={getSeverityColor(incident.severity)}>{incident.severity}</Badge>
                   </TableCell>

@@ -103,7 +103,7 @@ const LMDashboard = ({ activeSubSection }: LMDashboardProps) => {
       case "active": return "bg-emerald-500/20 text-emerald-400 border-emerald-500/50";
       case "pending": return "bg-yellow-500/20 text-yellow-400 border-yellow-500/50";
       case "review": return "bg-blue-500/20 text-blue-400 border-blue-500/50";
-      default: return "bg-gray-500/20 text-gray-400 border-gray-500/50";
+      default: return "bg-muted/20 text-muted-foreground border-border";
     }
   };
 
@@ -152,7 +152,7 @@ const LMDashboard = ({ activeSubSection }: LMDashboardProps) => {
       <Card className="bg-card/50 border-border/50">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <FileCheck className="w-5 h-5 text-rose-400" />
+            <FileCheck className="w-5 h-5 text-primary" />
             Recent Agreements
           </CardTitle>
         </CardHeader>
@@ -162,11 +162,11 @@ const LMDashboard = ({ activeSubSection }: LMDashboardProps) => {
               <motion.div
                 key={agreement.id}
                 whileHover={{ scale: 1.01 }}
-                className="flex items-center justify-between p-4 rounded-lg bg-slate-800/50 border border-slate-700/50"
+                className="flex items-center justify-between p-4 rounded-lg bg-surface/50 border border-border"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-rose-600/20 flex items-center justify-center">
-                    <FileCheck className="w-5 h-5 text-rose-400" />
+                  <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+                    <FileCheck className="w-5 h-5 text-primary" />
                   </div>
                   <div>
                     <p className="font-medium text-foreground">{agreement.name}</p>

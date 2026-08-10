@@ -33,7 +33,7 @@ const LMSettings = ({ activeSubSection }: LMSettingsProps) => {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-gray-600 to-gray-800 flex items-center justify-center shadow-lg">
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-background to-background flex items-center justify-center shadow-lg">
           <Settings className="w-7 h-7 text-white" />
         </div>
         <div>
@@ -53,11 +53,11 @@ const LMSettings = ({ activeSubSection }: LMSettingsProps) => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
             >
-              <Card className="bg-card/50 border-border/50 hover:border-gray-500/50 transition-colors">
+              <Card className="bg-card/50 border-border/50 hover:border-border transition-colors">
                 <CardHeader className="pb-2">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-gray-600/20 flex items-center justify-center">
-                      <Icon className="w-5 h-5 text-gray-400" />
+                    <div className="w-10 h-10 rounded-lg bg-muted/20 flex items-center justify-center">
+                      <Icon className="w-5 h-5 text-muted-foreground" />
                     </div>
                     <div className="flex-1">
                       <CardTitle className="text-base">{item.name}</CardTitle>

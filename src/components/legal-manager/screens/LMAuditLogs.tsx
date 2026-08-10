@@ -26,7 +26,7 @@ const LMAuditLogs = ({ activeSubSection }: LMAuditLogsProps) => {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-slate-600 to-slate-800 flex items-center justify-center shadow-lg">
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-background to-background flex items-center justify-center shadow-lg">
           <History className="w-7 h-7 text-white" />
         </div>
         <div>
@@ -51,11 +51,11 @@ const LMAuditLogs = ({ activeSubSection }: LMAuditLogsProps) => {
             transition={{ delay: index * 0.1 }}
           >
             <Card 
-              className="cursor-pointer hover:scale-105 transition-transform bg-slate-500/10 border-slate-500/30"
+              className="cursor-pointer hover:scale-105 transition-transform bg-muted/10 border-border"
               onClick={action.onClick}
             >
               <CardContent className="p-4 text-center">
-                <action.icon className="w-8 h-8 text-slate-400 mx-auto mb-2" />
+                <action.icon className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
                 <p className="text-sm font-medium text-foreground">{action.label}</p>
               </CardContent>
             </Card>
@@ -68,7 +68,7 @@ const LMAuditLogs = ({ activeSubSection }: LMAuditLogsProps) => {
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
-              <History className="w-5 h-5 text-slate-400" />
+              <History className="w-5 h-5 text-muted-foreground" />
               Recent Activity
             </CardTitle>
             <div className="flex gap-2">
@@ -87,11 +87,11 @@ const LMAuditLogs = ({ activeSubSection }: LMAuditLogsProps) => {
               <motion.div
                 key={log.id}
                 whileHover={{ scale: 1.01 }}
-                className="flex items-center justify-between p-4 rounded-lg bg-slate-800/50 border border-slate-700/50"
+                className="flex items-center justify-between p-4 rounded-lg bg-surface/50 border border-border"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-slate-600/20 flex items-center justify-center">
-                    <History className="w-5 h-5 text-slate-400" />
+                  <div className="w-10 h-10 rounded-lg bg-muted/20 flex items-center justify-center">
+                    <History className="w-5 h-5 text-muted-foreground" />
                   </div>
                   <div>
                     <p className="font-medium text-foreground">{log.action}</p>

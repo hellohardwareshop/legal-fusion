@@ -19,7 +19,7 @@ const LegalContracts = () => {
       case "expiring_soon": return "bg-yellow-500/20 text-yellow-400";
       case "expired": return "bg-red-500/20 text-red-400";
       case "under_review": return "bg-blue-500/20 text-blue-400";
-      default: return "bg-slate-500/20 text-slate-400";
+      default: return "bg-muted/20 text-muted-foreground";
     }
   };
 
@@ -57,56 +57,56 @@ const LegalContracts = () => {
       <h2 className="text-xl font-semibold text-white">Contracts</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="bg-slate-900/50 border-slate-700/50">
+        <Card className="bg-card/50 border-border">
           <CardContent className="pt-6 text-center">
-            <p className="text-slate-400 text-sm">Total Contracts</p>
+            <p className="text-muted-foreground text-sm">Total Contracts</p>
             <p className="text-3xl font-bold text-white mt-2">{contracts.length}</p>
           </CardContent>
         </Card>
-        <Card className="bg-slate-900/50 border-slate-700/50">
+        <Card className="bg-card/50 border-border">
           <CardContent className="pt-6 text-center">
-            <p className="text-slate-400 text-sm">Active</p>
+            <p className="text-muted-foreground text-sm">Active</p>
             <p className="text-3xl font-bold text-emerald-400 mt-2">{contracts.filter(c => c.status === "active").length}</p>
           </CardContent>
         </Card>
-        <Card className="bg-slate-900/50 border-slate-700/50">
+        <Card className="bg-card/50 border-border">
           <CardContent className="pt-6 text-center">
-            <p className="text-slate-400 text-sm">Expiring Soon</p>
+            <p className="text-muted-foreground text-sm">Expiring Soon</p>
             <p className="text-3xl font-bold text-yellow-400 mt-2">{contracts.filter(c => c.status === "expiring_soon").length}</p>
           </CardContent>
         </Card>
-        <Card className="bg-slate-900/50 border-slate-700/50">
+        <Card className="bg-card/50 border-border">
           <CardContent className="pt-6 text-center">
-            <p className="text-slate-400 text-sm">Under Review</p>
+            <p className="text-muted-foreground text-sm">Under Review</p>
             <p className="text-3xl font-bold text-blue-400 mt-2">{contracts.filter(c => c.status === "under_review").length}</p>
           </CardContent>
         </Card>
       </div>
 
 
-      <Card className="bg-slate-900/50 border-slate-700/50">
+      <Card className="bg-card/50 border-border">
         <CardHeader>
           <CardTitle className="text-amber-400">All Contracts</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
-              <TableRow className="border-slate-700">
-                <TableHead className="text-slate-400">Contract ID</TableHead>
-                <TableHead className="text-slate-400">Party</TableHead>
-                <TableHead className="text-slate-400">Region</TableHead>
-                <TableHead className="text-slate-400">Validity</TableHead>
-                <TableHead className="text-slate-400">Status</TableHead>
-                <TableHead className="text-slate-400">Actions</TableHead>
+              <TableRow className="border-border">
+                <TableHead className="text-muted-foreground">Contract ID</TableHead>
+                <TableHead className="text-muted-foreground">Party</TableHead>
+                <TableHead className="text-muted-foreground">Region</TableHead>
+                <TableHead className="text-muted-foreground">Validity</TableHead>
+                <TableHead className="text-muted-foreground">Status</TableHead>
+                <TableHead className="text-muted-foreground">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {contracts.map((contract) => (
-                <TableRow key={contract.id} className="border-slate-700/50">
+                <TableRow key={contract.id} className="border-border">
                   <TableCell className="text-amber-400 font-mono">{contract.ref_code}</TableCell>
                   <TableCell className="text-white">{contract.name}</TableCell>
-                  <TableCell className="text-slate-300">{contract.region}</TableCell>
-                  <TableCell className="text-slate-300 text-sm">{contract.validity}</TableCell>
+                  <TableCell className="text-foreground">{contract.region}</TableCell>
+                  <TableCell className="text-foreground text-sm">{contract.validity}</TableCell>
                   <TableCell>
                     <Badge className={getStatusColor(contract.status)}>
                       {contract.status.replace("_", " ")}

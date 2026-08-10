@@ -51,7 +51,7 @@ const LMInternationalLaw = ({ activeSubSection }: LMInternationalLawProps) => {
               <motion.div
                 key={law.id}
                 whileHover={{ scale: 1.01 }}
-                className="flex items-center justify-between p-4 rounded-lg bg-slate-800/50 border border-slate-700/50"
+                className="flex items-center justify-between p-4 rounded-lg bg-surface/50 border border-border"
               >
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-lg bg-cyan-600/20 flex items-center justify-center">

@@ -46,38 +46,38 @@ const LegalPoliciesTerms = () => {
     >
       <h2 className="text-xl font-semibold text-white">Policies & Terms</h2>
 
-      <Card className="bg-slate-900/50 border-slate-700/50">
+      <Card className="bg-card/50 border-border">
         <CardHeader>
           <CardTitle className="text-amber-400">All Legal Documents</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
-              <TableRow className="border-slate-700">
-                <TableHead className="text-slate-400">Document Name</TableHead>
-                <TableHead className="text-slate-400">Version</TableHead>
-                <TableHead className="text-slate-400">Region</TableHead>
-                <TableHead className="text-slate-400">Status</TableHead>
-                <TableHead className="text-slate-400">Last Updated</TableHead>
-                <TableHead className="text-slate-400">Actions</TableHead>
+              <TableRow className="border-border">
+                <TableHead className="text-muted-foreground">Document Name</TableHead>
+                <TableHead className="text-muted-foreground">Version</TableHead>
+                <TableHead className="text-muted-foreground">Region</TableHead>
+                <TableHead className="text-muted-foreground">Status</TableHead>
+                <TableHead className="text-muted-foreground">Last Updated</TableHead>
+                <TableHead className="text-muted-foreground">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {policies.map((policy) => (
-                <TableRow key={policy.id} className="border-slate-700/50">
+                <TableRow key={policy.id} className="border-border">
                   <TableCell className="text-white font-medium">{policy.name}</TableCell>
-                  <TableCell className="text-slate-300">{policy.version}</TableCell>
-                  <TableCell className="text-slate-300">{policy.region}</TableCell>
+                  <TableCell className="text-foreground">{policy.version}</TableCell>
+                  <TableCell className="text-foreground">{policy.region}</TableCell>
                   <TableCell>
                     <Badge className={
                       policy.status === "active" ? "bg-emerald-500/20 text-emerald-400" :
                       policy.status === "review" ? "bg-yellow-500/20 text-yellow-400" :
-                      "bg-slate-500/20 text-slate-400"
+                      "bg-muted/20 text-muted-foreground"
                     }>
                       {policy.status}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-slate-300">{policy.updated}</TableCell>
+                  <TableCell className="text-foreground">{policy.updated}</TableCell>
                   <TableCell>
                     <div className="flex gap-2">
                       <Button size="sm" variant="ghost" onClick={() => handleView(policy.name, policy.version)}>

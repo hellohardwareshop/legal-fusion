@@ -24,7 +24,7 @@ const LegalComplianceChecklist = () => {
       case "compliant": return <CheckCircle className="h-5 w-5 text-emerald-400" />;
       case "review_needed": return <AlertTriangle className="h-5 w-5 text-yellow-400" />;
       case "concern": return <AlertTriangle className="h-5 w-5 text-red-400" />;
-      default: return <CheckCircle className="h-5 w-5 text-slate-400" />;
+      default: return <CheckCircle className="h-5 w-5 text-muted-foreground" />;
     }
   };
 
@@ -61,7 +61,7 @@ const LegalComplianceChecklist = () => {
     icon: React.ReactNode,
     title: string,
   ) => (
-    <Card className="bg-slate-900/50 border-slate-700/50">
+    <Card className="bg-card/50 border-border">
       <CardHeader>
         <CardTitle className="text-amber-400 flex items-center gap-2">
           {icon}
@@ -70,12 +70,12 @@ const LegalComplianceChecklist = () => {
       </CardHeader>
       <CardContent className="space-y-3">
         {items.map((item) => (
-          <div key={item.id} className="flex items-center justify-between bg-slate-800/50 border border-slate-700 rounded-lg p-3">
+          <div key={item.id} className="flex items-center justify-between bg-surface/50 border border-border rounded-lg p-3">
             <div className="flex items-center gap-3">
               {getStatusIcon(item.status)}
               <div>
                 <p className="text-white text-sm">{item.name}</p>
-                <p className="text-slate-500 text-xs">Last review: {item.lastReview}</p>
+                <p className="text-muted-foreground text-xs">Last review: {item.lastReview}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">

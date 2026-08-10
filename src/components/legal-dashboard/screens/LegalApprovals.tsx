@@ -43,7 +43,7 @@ const LegalApprovals = () => {
       case "pending": return "bg-yellow-500/20 text-yellow-400";
       case "approved": return "bg-emerald-500/20 text-emerald-400";
       case "rejected": return "bg-red-500/20 text-red-400";
-      default: return "bg-slate-500/20 text-slate-400";
+      default: return "bg-muted/20 text-muted-foreground";
     }
   };
 
@@ -60,27 +60,27 @@ const LegalApprovals = () => {
         </Badge>
       </div>
 
-      <Card className="bg-slate-900/50 border-slate-700/50">
+      <Card className="bg-card/50 border-border">
         <CardHeader>
           <CardTitle className="text-amber-400">Approval Queue</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
-              <TableRow className="border-slate-700">
-                <TableHead className="text-slate-400">Item</TableHead>
-                <TableHead className="text-slate-400">Requested By</TableHead>
-                <TableHead className="text-slate-400">Impact</TableHead>
-                <TableHead className="text-slate-400">Status</TableHead>
-                <TableHead className="text-slate-400">Actions</TableHead>
+              <TableRow className="border-border">
+                <TableHead className="text-muted-foreground">Item</TableHead>
+                <TableHead className="text-muted-foreground">Requested By</TableHead>
+                <TableHead className="text-muted-foreground">Impact</TableHead>
+                <TableHead className="text-muted-foreground">Status</TableHead>
+                <TableHead className="text-muted-foreground">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {approvals.map((approval) => (
-                <TableRow key={approval.id} className="border-slate-700/50">
+                <TableRow key={approval.id} className="border-border">
                   <TableCell className="text-white font-medium">{approval.name}</TableCell>
-                  <TableCell className="text-slate-300 font-mono text-sm">{approval.requestedBy}</TableCell>
-                  <TableCell className="text-slate-300">{approval.impact}</TableCell>
+                  <TableCell className="text-foreground font-mono text-sm">{approval.requestedBy}</TableCell>
+                  <TableCell className="text-foreground">{approval.impact}</TableCell>
                   <TableCell>
                     <Badge className={getStatusColor(approval.status)}>{approval.status}</Badge>
                   </TableCell>

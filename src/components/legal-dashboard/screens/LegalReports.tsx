@@ -38,37 +38,37 @@ const LegalReports = () => {
       </div>
 
       <Tabs defaultValue="compliance" className="w-full">
-        <TabsList className="bg-slate-800 border-slate-700">
+        <TabsList className="bg-surface border-border">
           <TabsTrigger value="compliance" className="data-[state=active]:bg-amber-600">Compliance</TabsTrigger>
           <TabsTrigger value="incidents" className="data-[state=active]:bg-amber-600">Incidents</TabsTrigger>
           <TabsTrigger value="risk" className="data-[state=active]:bg-amber-600">Risk Exposure</TabsTrigger>
         </TabsList>
 
         <TabsContent value="compliance" className="mt-4">
-          <Card className="bg-slate-900/50 border-slate-700/50">
+          <Card className="bg-card/50 border-border">
             <CardHeader>
               <CardTitle className="text-amber-400">Compliance Report</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="grid grid-cols-3 gap-4">
-                  <div className="bg-slate-800/50 rounded-lg p-4 text-center">
-                    <p className="text-slate-400 text-sm">Overall Compliance</p>
+                  <div className="bg-surface/50 rounded-lg p-4 text-center">
+                    <p className="text-muted-foreground text-sm">Overall Compliance</p>
                     <p className="text-3xl font-bold text-emerald-400 mt-2">{overall}%</p>
                   </div>
-                  <div className="bg-slate-800/50 rounded-lg p-4 text-center">
-                    <p className="text-slate-400 text-sm">Regions Compliant</p>
+                  <div className="bg-surface/50 rounded-lg p-4 text-center">
+                    <p className="text-muted-foreground text-sm">Regions Compliant</p>
                     <p className="text-3xl font-bold text-white mt-2">{regionsCompliant}/{regions.length}</p>
                   </div>
-                  <div className="bg-slate-800/50 rounded-lg p-4 text-center">
-                    <p className="text-slate-400 text-sm">Pending Reviews</p>
+                  <div className="bg-surface/50 rounded-lg p-4 text-center">
+                    <p className="text-muted-foreground text-sm">Pending Reviews</p>
                     <p className="text-3xl font-bold text-yellow-400 mt-2">{pendingReviews}</p>
                   </div>
                 </div>
                 <div className="space-y-3">
                   {regions.map((region) => (
-                    <div key={region.id} className="flex justify-between p-3 bg-slate-800/50 rounded">
-                      <span className="text-slate-300">{region.name}</span>
+                    <div key={region.id} className="flex justify-between p-3 bg-surface/50 rounded">
+                      <span className="text-foreground">{region.name}</span>
                       <span className={region.status === "Compliant" ? "text-emerald-400" : "text-yellow-400"}>
                         {region.status}
                       </span>
@@ -81,35 +81,35 @@ const LegalReports = () => {
         </TabsContent>
 
         <TabsContent value="incidents" className="mt-4">
-          <Card className="bg-slate-900/50 border-slate-700/50">
+          <Card className="bg-card/50 border-border">
             <CardHeader>
               <CardTitle className="text-amber-400">Incident Resolution Summary</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="grid grid-cols-4 gap-4">
-                  <div className="bg-slate-800/50 rounded-lg p-4 text-center">
-                    <p className="text-slate-400 text-sm">Total Incidents</p>
+                  <div className="bg-surface/50 rounded-lg p-4 text-center">
+                    <p className="text-muted-foreground text-sm">Total Incidents</p>
                     <p className="text-2xl font-bold text-white mt-2">{incidents.length}</p>
                   </div>
-                  <div className="bg-slate-800/50 rounded-lg p-4 text-center">
-                    <p className="text-slate-400 text-sm">Resolved</p>
+                  <div className="bg-surface/50 rounded-lg p-4 text-center">
+                    <p className="text-muted-foreground text-sm">Resolved</p>
                     <p className="text-2xl font-bold text-emerald-400 mt-2">{resolved}</p>
                   </div>
-                  <div className="bg-slate-800/50 rounded-lg p-4 text-center">
-                    <p className="text-slate-400 text-sm">In Progress</p>
+                  <div className="bg-surface/50 rounded-lg p-4 text-center">
+                    <p className="text-muted-foreground text-sm">In Progress</p>
                     <p className="text-2xl font-bold text-blue-400 mt-2">{inProgress}</p>
                   </div>
-                  <div className="bg-slate-800/50 rounded-lg p-4 text-center">
-                    <p className="text-slate-400 text-sm">Escalated</p>
+                  <div className="bg-surface/50 rounded-lg p-4 text-center">
+                    <p className="text-muted-foreground text-sm">Escalated</p>
                     <p className="text-2xl font-bold text-red-400 mt-2">{escalated}</p>
                   </div>
                 </div>
                 <div className="space-y-3">
                   {incidents.map((incident) => (
-                    <div key={incident.id} className="flex justify-between p-3 bg-slate-800/50 rounded">
+                    <div key={incident.id} className="flex justify-between p-3 bg-surface/50 rounded">
                       <span className="text-white text-sm">{incident.name}</span>
-                      <span className="text-slate-400 text-xs">{incident.status.replace("_", " ")}</span>
+                      <span className="text-muted-foreground text-xs">{incident.status.replace("_", " ")}</span>
                     </div>
                   ))}
                 </div>
@@ -119,14 +119,14 @@ const LegalReports = () => {
         </TabsContent>
 
         <TabsContent value="risk" className="mt-4">
-          <Card className="bg-slate-900/50 border-slate-700/50">
+          <Card className="bg-card/50 border-border">
             <CardHeader>
               <CardTitle className="text-amber-400">Risk Exposure Overview</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {risks.map((risk) => (
-                  <div key={risk.id} className="bg-slate-800/50 rounded-lg p-4">
+                  <div key={risk.id} className="bg-surface/50 rounded-lg p-4">
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-white">{risk.name}</span>
                       <span className={
@@ -135,7 +135,7 @@ const LegalReports = () => {
                         "text-red-400"
                       }>{risk.status}</span>
                     </div>
-                    <div className="w-full bg-slate-700 rounded-full h-2">
+                    <div className="w-full bg-muted rounded-full h-2">
                       <div
                         className={`h-2 rounded-full ${
                           risk.status === "Low" ? "bg-emerald-500" :
