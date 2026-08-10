@@ -44,7 +44,7 @@ interface MenuItem {
   children?: { id: string; label: string }[];
 }
 
-const menuItems: MenuItem[] = [
+export const menuItems: MenuItem[] = [
   {
     id: "dashboard",
     label: "Legal Dashboard",
