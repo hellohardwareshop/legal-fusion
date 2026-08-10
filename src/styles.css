@@ -19,7 +19,9 @@
   --color-accent-pink: hsl(var(--accent-pink));
   --color-accent-amber: hsl(var(--accent-amber));
   --color-accent-emerald: hsl(var(--accent-emerald));
+  --color-surface: hsl(var(--surface));
   --color-surface-foreground: hsl(var(--foreground));
+
 
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
