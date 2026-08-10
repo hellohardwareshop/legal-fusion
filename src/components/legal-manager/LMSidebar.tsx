@@ -259,25 +259,26 @@ const LMSidebar = ({ activeSection, setActiveSection, onBack }: LMSidebarProps) 
 
   return (
     <motion.aside
-      initial={{ x: -100, opacity: 0 }}
+      initial={{ x: -24, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
-      className="w-72 bg-gradient-to-b from-slate-900 to-slate-950 border-r border-rose-900/30 flex flex-col h-full"
+      transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
+      className="w-[264px] shrink-0 h-full flex flex-col border-r border-sidebar-border bg-sidebar/80 backdrop-blur-xl"
     >
       {/* Header */}
-      <div className="p-4 border-b border-rose-900/30">
+      <div className="p-4 border-b border-sidebar-border">
         <div className="flex items-center gap-3 mb-3">
-          <Avatar className="w-10 h-10 ring-2 ring-rose-500/50">
-            <AvatarFallback className="bg-gradient-to-br from-rose-500 to-rose-700 text-white font-bold text-sm">
+          <Avatar className="w-10 h-10 rounded-xl icon3d">
+            <AvatarFallback className="rounded-xl bg-primary/15 text-primary font-semibold text-sm">
               LM
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
-            <h2 className="text-sm font-semibold text-white truncate">Legal Manager</h2>
-            <p className="text-xs text-rose-400/70">Software Vala workspace</p>
+            <h2 className="text-sm font-semibold text-foreground truncate">Legal Manager</h2>
+            <p className="text-xs text-muted-foreground truncate">Software Vala workspace</p>
           </div>
         </div>
 
-        <Badge className="w-full justify-center bg-rose-600/20 text-rose-400 border-rose-500/40 py-1.5 mb-3">
+        <Badge className="w-full justify-center bg-primary/12 text-primary border border-primary/25 py-1.5 mb-3 rounded-lg font-medium tracking-wide">
           <Scale className="w-3 h-3 mr-1.5" />
           LEGAL MANAGER
         </Badge>
@@ -287,34 +288,24 @@ const LMSidebar = ({ activeSection, setActiveSection, onBack }: LMSidebarProps) 
             variant="outline"
             size="sm"
             onClick={onBack}
-            className="w-full mb-2 bg-slate-800/50 border-slate-700/50 text-slate-300 hover:bg-slate-700/50"
+            className="w-full mb-2 rounded-lg border-border bg-surface/60 text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="w-3.5 h-3.5 mr-1" />
             Back to Control Panel
           </Button>
         )}
 
-        <motion.div
-          className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30"
-          animate={{
-            boxShadow: [
-              "0 0 10px rgba(16,185,129,0.1)",
-              "0 0 20px rgba(16,185,129,0.2)",
-              "0 0 10px rgba(16,185,129,0.1)",
-            ],
-          }}
-          transition={{ duration: 3, repeat: Infinity }}
-        >
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="text-xs text-emerald-400 font-medium">AI assistance active · Human approval required</span>
-          </div>
-        </motion.div>
+        <div className="flex items-center gap-2 rounded-lg border border-border bg-surface/50 px-3 py-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-accent-emerald animate-pulse" />
+          <span className="text-[11px] leading-tight text-muted-foreground">
+            AI assistance active · Human approval required
+          </span>
+        </div>
       </div>
 
       {/* Navigation */}
-      <ScrollArea className="flex-1 px-2 py-2">
-        <nav className="space-y-1">
+      <ScrollArea className="flex-1 px-2 py-3">
+        <nav className="space-y-0.5">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isExpanded = expandedItems.includes(item.id);
@@ -323,25 +314,26 @@ const LMSidebar = ({ activeSection, setActiveSection, onBack }: LMSidebarProps) 
 
             return (
               <div key={item.id}>
-                <motion.button
+                <button
                   onClick={() => handleItemClick(item.id, hasChildren)}
-                  whileHover={{ x: 2 }}
-                  whileTap={{ scale: 0.98 }}
                   className={cn(
-                    "w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200 text-left",
+                    "group relative w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left transition-all duration-200",
                     isActive
-                      ? "bg-rose-600/20 text-rose-400 border border-rose-600/30"
-                      : "text-slate-400 hover:text-rose-400 hover:bg-slate-800/50"
+                      ? "bg-primary/12 text-foreground"
+                      : "text-muted-foreground hover:bg-surface/70 hover:text-foreground"
                   )}
                 >
-                  <Icon className={cn("w-4 h-4 flex-shrink-0", isActive ? "text-rose-500" : "")} />
+                  {isActive && (
+                    <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r-full bg-primary" />
+                  )}
+                  <Icon className={cn("w-4 h-4 flex-shrink-0", isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground")} />
                   <span className="font-medium text-xs flex-1 truncate">{item.label}</span>
                   {hasChildren && (
                     <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.2 }}>
-                      <ChevronDown className="w-3 h-3" />
+                      <ChevronDown className="w-3 h-3 opacity-60" />
                     </motion.div>
                   )}
-                </motion.button>
+                </button>
 
                 <AnimatePresence>
                   {hasChildren && isExpanded && (
@@ -350,23 +342,22 @@ const LMSidebar = ({ activeSection, setActiveSection, onBack }: LMSidebarProps) 
                       animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
                       transition={{ duration: 0.2 }}
-                      className="ml-4 mt-1 space-y-0.5 border-l border-slate-700/50 pl-2"
+                      className="ml-5 mt-0.5 mb-1 space-y-0.5 border-l border-sidebar-border pl-2 overflow-hidden"
                     >
                       {item.children?.map((child) => (
-                        <motion.button
+                        <button
                           key={child.id}
                           onClick={() => handleChildClick(child.id, item.id)}
-                          whileHover={{ x: 2 }}
                           className={cn(
-                            "w-full flex items-center gap-2 px-2 py-1.5 rounded text-left transition-all duration-200",
+                            "w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-left transition-all duration-200",
                             activeSection === child.id
-                              ? "bg-rose-600/10 text-rose-400"
-                              : "text-slate-500 hover:text-rose-400 hover:bg-slate-800/30"
+                              ? "bg-primary/10 text-primary"
+                              : "text-muted-foreground/80 hover:text-foreground hover:bg-surface/60"
                           )}
                         >
-                          <ChevronRight className="w-3 h-3" />
+                          <ChevronRight className="w-3 h-3 opacity-60" />
                           <span className="text-xs truncate">{child.label}</span>
-                        </motion.button>
+                        </button>
                       ))}
                     </motion.div>
                   )}
@@ -378,12 +369,12 @@ const LMSidebar = ({ activeSection, setActiveSection, onBack }: LMSidebarProps) 
       </ScrollArea>
 
       {/* Footer */}
-      <div className="p-3 border-t border-rose-900/30">
+      <div className="p-3 border-t border-sidebar-border">
         <Button
           variant="outline"
           size="sm"
           onClick={() => toast.warning("Logout clicked")}
-          className="w-full bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20"
+          className="w-full rounded-lg border-destructive/30 bg-destructive/10 text-destructive hover:bg-destructive/20"
         >
           <LogOut className="w-3.5 h-3.5 mr-1.5" />
           Logout
@@ -392,5 +383,6 @@ const LMSidebar = ({ activeSection, setActiveSection, onBack }: LMSidebarProps) 
     </motion.aside>
   );
 };
+
 
 export default LMSidebar;
