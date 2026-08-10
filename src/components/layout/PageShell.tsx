@@ -1,5 +1,4 @@
-import type { ReactNode } from "react";
-import type { LucideIcon } from "lucide-react";
+import type { ComponentType, ReactNode } from "react";
 import { motion } from "framer-motion";
 
 import { cn } from "@/lib/utils";
@@ -21,7 +20,7 @@ interface ModuleHeroProps {
   eyebrow?: string;
   title: string;
   description?: string;
-  icon?: LucideIcon;
+  icon?: ComponentType<{ className?: string }>;
   actions?: ReactNode;
   meta?: Array<{ label: string; value: string }>;
 }
