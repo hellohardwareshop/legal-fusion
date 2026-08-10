@@ -111,7 +111,7 @@ const LMDashboard = ({ activeSubSection }: LMDashboardProps) => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-600 to-rose-800 flex items-center justify-center shadow-lg">
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-primary flex items-center justify-center shadow-lg">
           <Scale className="w-7 h-7 text-white" />
         </div>
         <div>
