@@ -121,27 +121,43 @@ const LMEnterpriseLayout = ({ onBack }: LMEnterpriseLayoutProps) => {
     return <LMDashboard activeSubSection={activeSection} />;
   };
 
+  const parent = menuItems.find(
+    (item) => item.id === activeSection || item.children?.some((c) => c.id === activeSection),
+  );
+  const child = parent?.children?.find((c) => c.id === activeSection);
+  const HeroIcon = parent?.icon ?? Scale;
+  const heroTitle = child?.label ?? parent?.label ?? "Legal Dashboard";
+  const heroEyebrow = child ? parent?.label : "Legal & Compliance";
+
   return (
-    <div className="flex h-screen overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <div className="flex h-screen overflow-hidden bg-background">
       <LMSidebar
         activeSection={activeSection}
         setActiveSection={setActiveSection}
         onBack={onBack}
       />
-      
+
       <div className="min-w-0 flex-1 overflow-auto">
         <motion.div
           key={activeSection}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="p-6"
         >
-          {renderContent()}
+          <PageShell>
+            <ModuleHero
+              eyebrow={heroEyebrow}
+              title={heroTitle}
+              description="Live legal operations for Software Vala — agreements, compliance, IP and audit in one workspace."
+              icon={HeroIcon}
+            />
+            {renderContent()}
+          </PageShell>
         </motion.div>
       </div>
     </div>
   );
 };
+
 
 export default LMEnterpriseLayout;
