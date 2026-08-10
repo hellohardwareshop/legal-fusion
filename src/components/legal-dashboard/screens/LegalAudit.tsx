@@ -32,7 +32,7 @@ const LegalAudit = () => {
       case "Pending Approval": return "text-yellow-400";
       case "Rejected": case "Flagged Risk": return "text-red-400";
       case "Escalated": return "text-purple-400";
-      default: return "text-slate-400";
+      default: return "text-muted-foreground";
     }
   };
 
@@ -45,9 +45,9 @@ const LegalAudit = () => {
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
           <Shield className="h-6 w-6 text-amber-400" />
-          <h2 className="text-xl font-semibold text-white">Audit Trail</h2>
+          <h2 className="text-xl font-semibold text-primary-foreground">Audit Trail</h2>
         </div>
-        <Badge className="bg-slate-700 text-slate-300">Read Only</Badge>
+        <Badge className="bg-muted text-foreground">Read Only</Badge>
       </div>
 
       <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 flex items-center gap-3">
@@ -57,19 +57,19 @@ const LegalAudit = () => {
         </p>
       </div>
 
-      <Card className="bg-slate-900/50 border-slate-700/50">
+      <Card className="bg-card/50 border-border">
         <CardHeader>
           <CardTitle className="text-amber-400">Activity Log</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
-              <TableRow className="border-slate-700">
-                <TableHead className="text-slate-400">Time</TableHead>
-                <TableHead className="text-slate-400">Action</TableHead>
-                <TableHead className="text-slate-400">Actor</TableHead>
-                <TableHead className="text-slate-400">Result</TableHead>
-                <TableHead className="text-slate-400">Approval Reference</TableHead>
+              <TableRow className="border-border">
+                <TableHead className="text-muted-foreground">Time</TableHead>
+                <TableHead className="text-muted-foreground">Action</TableHead>
+                <TableHead className="text-muted-foreground">Actor</TableHead>
+                <TableHead className="text-muted-foreground">Result</TableHead>
+                <TableHead className="text-muted-foreground">Approval Reference</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -80,14 +80,14 @@ const LegalAudit = () => {
                     ? log.ref_code
                     : "N/A";
                 return (
-                  <TableRow key={log.id} className="border-slate-700/50">
-                    <TableCell className="text-slate-300 font-mono text-sm">
+                  <TableRow key={log.id} className="border-border">
+                    <TableCell className="text-foreground font-mono text-sm">
                       {new Date(log.logged_at).toLocaleString("sv-SE").replace("T", " ")}
                     </TableCell>
-                    <TableCell className="text-white">{log.action}</TableCell>
-                    <TableCell className="text-slate-300 font-mono text-sm">{log.actor}</TableCell>
+                    <TableCell className="text-primary-foreground">{log.action}</TableCell>
+                    <TableCell className="text-foreground font-mono text-sm">{log.actor}</TableCell>
                     <TableCell className={getResultColor(result)}>{result}</TableCell>
-                    <TableCell className={approvalRef === "N/A" ? "text-slate-500" : "text-amber-400 font-mono text-sm"}>
+                    <TableCell className={approvalRef === "N/A" ? "text-muted-foreground" : "text-amber-400 font-mono text-sm"}>
                       {approvalRef}
                     </TableCell>
                   </TableRow>

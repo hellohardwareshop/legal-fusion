@@ -11,9 +11,22 @@
  */
 
 @theme inline {
-  --font-sans: Outfit, system-ui, sans-serif;
-  --font-display: "Space Grotesk", Outfit, sans-serif;
+  --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-display: Inter, ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", monospace;
+
+  --color-primary-glow: hsl(var(--primary-glow));
+  --color-accent-pink: hsl(var(--accent-pink));
+  --color-accent-amber: hsl(var(--accent-amber));
+  --color-accent-emerald: hsl(var(--accent-emerald));
+  --color-surface: hsl(var(--surface));
+  --color-surface-foreground: hsl(var(--foreground));
+
+
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --shadow-hero: 0 30px 80px -30px hsl(var(--primary) / 0.55);
+
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -154,60 +167,65 @@
        oklch → HSL approximations for Tailwind v3
        ======================================== */
 
-    /* Core */
-    --background: 258 20% 12%;
-    --foreground: 258 5% 97%;
+    /* Core — deep navy enterprise surface (creator's-launchpad parity) */
+    --background: 216 57% 9%;
+    --foreground: 211 47% 98%;
 
-    --surface: 258 15% 18%;
-    --surface-2: 258 12% 22%;
+    --surface: 216 42% 12%;
+    --surface-2: 216 40% 14%;
 
-    --card: 258 15% 18%;
-    --card-foreground: 258 5% 97%;
+    --card: 216 45% 12%;
+    --card-foreground: 211 47% 98%;
 
-    --popover: 258 15% 20%;
-    --popover-foreground: 258 5% 97%;
+    --popover: 216 40% 13%;
+    --popover-foreground: 211 47% 98%;
 
-    /* Brand — deep blue from logo */
-    --primary: 250 75% 58%;
-    --primary-foreground: 0 0% 99%;
-    --brand: 250 70% 52%;
-    --brand-foreground: 0 0% 99%;
-    --brand-red: 10 82% 55%;
+    /* Brand — premium enterprise blue */
+    --primary: 209 98% 46%;
+    --primary-foreground: 211 100% 99%;
+    --primary-glow: 208 91% 56%;
+    --brand: 209 98% 46%;
+    --brand-foreground: 211 100% 99%;
+    --brand-red: 360 76% 58%;
 
-    --secondary: 258 12% 26%;
-    --secondary-foreground: 258 5% 97%;
+    --secondary: 216 30% 18%;
+    --secondary-foreground: 211 47% 98%;
 
-    --muted: 258 10% 24%;
-    --muted-foreground: 258 8% 68%;
+    --muted: 216 29% 16%;
+    --muted-foreground: 214 16% 68%;
 
-    --accent: 255 15% 28%;
-    --accent-foreground: 258 5% 97%;
+    --accent: 214 40% 21%;
+    --accent-foreground: 211 47% 98%;
+    --accent-pink: 262 55% 71%;
+    --accent-amber: 42 85% 63%;
+    --accent-emerald: 160 62% 46%;
 
-    --destructive: 10 82% 55%;
-    --destructive-foreground: 0 0% 99%;
+    --destructive: 360 76% 58%;
+    --destructive-foreground: 211 100% 99%;
 
-    --success: 152 45% 62%;
-    --warning: 45 70% 65%;
+    --success: 160 62% 46%;
+    --warning: 42 85% 63%;
 
-    --border: 258 10% 22%;
-    --input: 258 10% 26%;
-    --ring: 250 75% 58%;
+    --border: 216 25% 20%;
+    --input: 216 25% 23%;
+    --ring: 209 98% 46%;
 
-    --radius: 0.875rem;
+    --radius: 0.75rem;
 
     /* Unified Sidebar — deeper than background */
-    --sidebar-background: 258 22% 10%;
-    --sidebar-foreground: 258 8% 85%;
-    --sidebar-primary: 250 75% 58%;
-    --sidebar-primary-foreground: 0 0% 99%;
-    --sidebar-accent: 255 15% 22%;
-    --sidebar-accent-foreground: 258 5% 97%;
-    --sidebar-border: 258 12% 18%;
-    --sidebar-ring: 250 75% 58%;
+    --sidebar-background: 216 57% 8%;
+    --sidebar-foreground: 214 16% 78%;
+    --sidebar-primary: 209 98% 46%;
+    --sidebar-primary-foreground: 211 100% 99%;
+    --sidebar-accent: 214 40% 18%;
+    --sidebar-accent-foreground: 211 47% 98%;
+    --sidebar-border: 216 25% 18%;
+    --sidebar-ring: 209 98% 46%;
 
     /* Gradients */
-    --gradient-brand: linear-gradient(135deg, hsl(250 75% 58%), hsl(275 70% 55%));
-    --gradient-hero: linear-gradient(120deg, hsl(258 15% 22%) 0%, hsl(265 18% 20%) 50%, hsl(250 40% 30%) 100%);
+    --gradient-brand: linear-gradient(135deg, hsl(209 98% 46%), hsl(208 91% 56%));
+    --gradient-hero: linear-gradient(135deg, hsl(209 98% 46%) 0%, hsl(208 91% 56%) 100%);
+
     --gradient-purple: linear-gradient(135deg, hsl(250 75% 58%), hsl(275 70% 55%));
     --gradient-blue: linear-gradient(135deg, hsl(220 75% 55%), hsl(200 80% 60%));
     --gradient-teal: linear-gradient(135deg, hsl(170 60% 45%), hsl(150 55% 50%));
@@ -272,43 +290,45 @@
 
   /* Dark Mode - Premium Dark */
   .dark {
-    --background: 224 71% 8%;
-    --foreground: 220 20% 98%;
+    /* app is dark-first — tokens mirror :root */
+    --background: 216 57% 9%;
+    --foreground: 211 47% 98%;
 
-    --card: 224 71% 11%;
-    --card-foreground: 220 20% 98%;
+    --card: 216 45% 12%;
+    --card-foreground: 211 47% 98%;
 
-    --popover: 224 71% 11%;
-    --popover-foreground: 220 20% 98%;
+    --popover: 216 40% 13%;
+    --popover-foreground: 211 47% 98%;
 
-    --primary: 243 75% 65%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 209 98% 46%;
+    --primary-foreground: 211 100% 99%;
 
-    --secondary: 224 50% 15%;
-    --secondary-foreground: 220 20% 98%;
+    --secondary: 216 30% 18%;
+    --secondary-foreground: 211 47% 98%;
 
-    --muted: 224 50% 15%;
-    --muted-foreground: 220 14% 60%;
+    --muted: 216 29% 16%;
+    --muted-foreground: 214 16% 68%;
 
-    --accent: 258 90% 70%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 214 40% 21%;
+    --accent-foreground: 211 47% 98%;
 
-    --destructive: 0 63% 50%;
-    --destructive-foreground: 220 20% 98%;
+    --destructive: 360 76% 58%;
+    --destructive-foreground: 211 100% 99%;
 
-    --border: 224 50% 18%;
-    --input: 224 50% 18%;
-    --ring: 243 75% 65%;
+    --border: 216 25% 20%;
+    --input: 216 25% 23%;
+    --ring: 209 98% 46%;
 
-    --sidebar-background: 243 75% 55%;
-    --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 0 0% 100%;
-    --sidebar-primary-foreground: 243 75% 55%;
-    --sidebar-accent: 243 75% 45%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 243 60% 60%;
-    --sidebar-ring: 0 0% 100%;
+    --sidebar-background: 216 57% 8%;
+    --sidebar-foreground: 214 16% 78%;
+    --sidebar-primary: 209 98% 46%;
+    --sidebar-primary-foreground: 211 100% 99%;
+    --sidebar-accent: 214 40% 18%;
+    --sidebar-accent-foreground: 211 47% 98%;
+    --sidebar-border: 216 25% 18%;
+    --sidebar-ring: 209 98% 46%;
   }
+
 }
 
 @layer base {
@@ -318,18 +338,123 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Outfit', system-ui, sans-serif;
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    background-image:
+      radial-gradient(60% 40% at 20% 0%, hsl(var(--primary) / 0.12), transparent 60%),
+      radial-gradient(50% 35% at 90% 10%, hsl(var(--primary-glow) / 0.07), transparent 60%);
+    background-attachment: fixed;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', 'Outfit', sans-serif;
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
     @apply font-semibold tracking-tight;
   }
 
   code, pre, .mono {
     font-family: 'JetBrains Mono', monospace;
   }
+
+  /* Thin, rounded, auto-hiding premium scrollbars */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+  }
+  *:hover, *:focus-within {
+    scrollbar-color: color-mix(in oklab, hsl(var(--foreground)) 22%, transparent) transparent;
+  }
+  *::-webkit-scrollbar { width: 6px; height: 6px; }
+  *::-webkit-scrollbar-track { background: transparent; }
+  *::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 9999px;
+    transition: background 200ms ease;
+  }
+  *:hover::-webkit-scrollbar-thumb, *:focus-within::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, hsl(var(--foreground)) 20%, transparent);
+  }
 }
+
+/* ─────────────── creator's-launchpad premium surfaces ─────────────── */
+@utility icon3d {
+  background-image:
+    linear-gradient(180deg, oklch(1 0 0 / 0.09), oklch(1 0 0 / 0.02) 45%, oklch(0 0 0 / 0.10)),
+    linear-gradient(hsl(var(--surface)), hsl(var(--surface)));
+  border: 1px solid hsl(var(--border));
+  box-shadow:
+    0 1px 0 0 oklch(1 0 0 / 0.10) inset,
+    0 1px 2px 0 oklch(0 0 0 / 0.35);
+  &:hover {
+    border-color: color-mix(in oklab, hsl(var(--primary)) 40%, hsl(var(--border)));
+    box-shadow:
+      0 1px 0 0 oklch(1 0 0 / 0.14) inset,
+      0 4px 10px -4px oklch(0 0 0 / 0.45);
+  }
+  &:active { box-shadow: 0 1px 3px 0 oklch(0 0 0 / 0.35) inset; }
+}
+
+@utility bento-card {
+  position: relative;
+  background-image:
+    linear-gradient(160deg, color-mix(in oklab, hsl(var(--primary)) 7%, transparent), transparent 55%),
+    linear-gradient(hsl(var(--card)), hsl(var(--card)));
+  border: 1px solid hsl(var(--border));
+  border-radius: calc(var(--radius) + 8px);
+  padding: 1.5rem;
+  box-shadow: 0 1px 0 0 oklch(1 0 0 / 0.04) inset, 0 20px 40px -20px oklch(0 0 0 / 0.6);
+  transition: box-shadow 350ms ease, border-color 350ms ease, transform 350ms ease;
+  &:hover {
+    border-color: color-mix(in oklab, hsl(var(--primary)) 35%, hsl(var(--border)));
+    box-shadow:
+      0 1px 0 0 oklch(1 0 0 / 0.06) inset,
+      0 28px 60px -28px oklch(0 0 0 / 0.7),
+      0 0 34px -14px color-mix(in oklab, hsl(var(--primary)) 70%, transparent);
+  }
+}
+
+@utility hero-surface {
+  background-image: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-glow)) 100%);
+  color: hsl(var(--primary-foreground));
+  border-radius: calc(var(--radius) + 8px);
+  box-shadow: 0 30px 80px -30px hsl(var(--primary) / 0.55);
+}
+
+@utility btn-sheen {
+  isolation: isolate;
+  overflow: hidden;
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(110deg, transparent 25%, color-mix(in oklab, white 28%, transparent) 45%, transparent 65%);
+    transform: translateX(-120%);
+    transition: transform 700ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    pointer-events: none;
+    opacity: 0.7;
+  }
+  &:hover::after { transform: translateX(120%); }
+  & > * { position: relative; z-index: 2; }
+}
+
+@utility btn-glow {
+  background-image: linear-gradient(
+    135deg,
+    hsl(var(--primary)) 0%,
+    hsl(var(--primary-glow)) 55%,
+    color-mix(in oklab, hsl(var(--accent-pink)) 55%, hsl(var(--primary-glow))) 100%
+  );
+  color: hsl(var(--primary-foreground));
+  box-shadow:
+    0 1px 0 0 oklch(1 0 0 / 0.22) inset,
+    0 0 0 1px color-mix(in oklab, hsl(var(--primary-glow)) 40%, transparent),
+    0 10px 30px -12px color-mix(in oklab, hsl(var(--primary)) 85%, transparent);
+  &:hover {
+    filter: saturate(1.08) brightness(1.05);
+    transform: translateY(-1px);
+  }
+  &:active { transform: translateY(0); }
+}
+
 
 @layer components {
   /* ========================================

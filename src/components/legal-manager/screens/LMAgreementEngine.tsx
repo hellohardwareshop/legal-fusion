@@ -30,7 +30,7 @@ const LMAgreementEngine = ({ activeSubSection }: LMAgreementEngineProps) => {
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-600 to-purple-800 flex items-center justify-center shadow-lg">
-          <Sparkles className="w-7 h-7 text-white" />
+          <Sparkles className="w-7 h-7 text-primary-foreground" />
         </div>
         <div>
           <h1 className="text-2xl font-bold text-foreground">Agreement Engine (AI)</h1>
@@ -81,7 +81,7 @@ const LMAgreementEngine = ({ activeSubSection }: LMAgreementEngineProps) => {
               <motion.div
                 key={generator.id}
                 whileHover={{ scale: 1.01 }}
-                className="flex items-center justify-between p-4 rounded-lg bg-slate-800/50 border border-slate-700/50"
+                className="flex items-center justify-between p-4 rounded-lg bg-surface/50 border border-border"
               >
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-lg bg-purple-600/20 flex items-center justify-center">

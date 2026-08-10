@@ -64,7 +64,7 @@ const LMAILegalIntelligence = ({ activeSubSection }: LMAILegalIntelligenceProps)
     <div className="space-y-6">
       <div className="flex items-center gap-4">
         <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-600 to-pink-800 flex items-center justify-center shadow-lg">
-          <Brain className="w-7 h-7 text-white" />
+          <Brain className="w-7 h-7 text-primary-foreground" />
         </div>
         <div>
           <h1 className="text-2xl font-bold text-foreground">AI Legal Intelligence</h1>
@@ -115,7 +115,7 @@ const LMAILegalIntelligence = ({ activeSubSection }: LMAILegalIntelligenceProps)
               <motion.div
                 key={feature.id}
                 whileHover={{ scale: 1.01 }}
-                className="flex items-center justify-between p-4 rounded-lg bg-slate-800/50 border border-slate-700/50"
+                className="flex items-center justify-between p-4 rounded-lg bg-surface/50 border border-border"
               >
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-lg bg-pink-600/20 flex items-center justify-center">
@@ -154,7 +154,7 @@ const LMAILegalIntelligence = ({ activeSubSection }: LMAILegalIntelligenceProps)
       </Card>
 
       <Dialog open={openTask !== null} onOpenChange={(o) => !o && setOpenTask(null)}>
-        <DialogContent className="max-w-2xl bg-slate-900 border-slate-700">
+        <DialogContent className="max-w-2xl bg-card border-border">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-pink-400">
               <Sparkles className="w-5 h-5" />
@@ -165,19 +165,19 @@ const LMAILegalIntelligence = ({ activeSubSection }: LMAILegalIntelligenceProps)
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder={(openTask && AI_TASKS[openTask]?.placeholder) || "Describe what you need the legal AI to do..."}
-            className="min-h-28 bg-slate-800/60 border-slate-700"
+            className="min-h-28 bg-surface/60 border-border"
           />
           <Button
             onClick={() => openTask && runAI(openTask)}
             disabled={isLoading}
-            className="bg-pink-600 hover:bg-pink-700 text-white"
+            className="bg-pink-600 hover:bg-pink-700 text-primary-foreground"
           >
             {isLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Brain className="w-4 h-4 mr-2" />}
             {isLoading ? "Analysing..." : "Run AI"}
           </Button>
           {result && (
-            <ScrollArea className="max-h-72 rounded-lg border border-slate-700 bg-slate-800/40 p-4">
-              <p className="text-sm text-slate-200 whitespace-pre-wrap">{result}</p>
+            <ScrollArea className="max-h-72 rounded-lg border border-border bg-surface/40 p-4">
+              <p className="text-sm text-foreground whitespace-pre-wrap">{result}</p>
             </ScrollArea>
           )}
         </DialogContent>

@@ -83,16 +83,16 @@ const LegalOverview = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
           >
-            <Card className="bg-slate-900/50 border-slate-700/50">
+            <Card className="bg-card/50 border-border">
               <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-slate-400">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
                   {stat.label}
                 </CardTitle>
                 <stat.icon className={`h-5 w-5 ${stat.color}`} />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-white">{stat.value}</div>
-                <p className="text-xs text-slate-500 mt-1">{stat.trend}</p>
+                <div className="text-2xl font-bold text-primary-foreground">{stat.value}</div>
+                <p className="text-xs text-muted-foreground mt-1">{stat.trend}</p>
               </CardContent>
             </Card>
           </motion.div>
@@ -100,15 +100,15 @@ const LegalOverview = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="bg-slate-900/50 border-slate-700/50">
+        <Card className="bg-card/50 border-border">
           <CardHeader>
             <CardTitle className="text-amber-400">Regional Compliance Status</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               {regions.map((item) => (
-                <div key={item.id} className="flex justify-between p-3 bg-slate-800/50 rounded">
-                  <span className="text-slate-300">{item.name}</span>
+                <div key={item.id} className="flex justify-between p-3 bg-surface/50 rounded">
+                  <span className="text-foreground">{item.name}</span>
                   <span
                     className={
                       item.status === "Compliant" ? "text-emerald-400" : "text-yellow-400"
@@ -122,16 +122,16 @@ const LegalOverview = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-slate-900/50 border-slate-700/50">
+        <Card className="bg-card/50 border-border">
           <CardHeader>
             <CardTitle className="text-amber-400">Recent Alerts</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               {alerts.slice(0, 4).map((item) => (
-                <div key={item.id} className="flex justify-between p-3 bg-slate-800/50 rounded">
-                  <span className="text-white text-sm">{item.title}</span>
-                  <span className="text-slate-500 text-xs">{formatAge(item.detected_at)}</span>
+                <div key={item.id} className="flex justify-between p-3 bg-surface/50 rounded">
+                  <span className="text-primary-foreground text-sm">{item.title}</span>
+                  <span className="text-muted-foreground text-xs">{formatAge(item.detected_at)}</span>
                 </div>
               ))}
             </div>
