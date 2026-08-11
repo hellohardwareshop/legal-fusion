@@ -1,100 +1,32 @@
-import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Globe, Shield, FileText, Eye, Edit, Lock, CheckCircle, History } from "lucide-react";
-import { toast } from "sonner";
+import { Globe, CheckCircle, AlertTriangle } from "lucide-react";
 
-import { useLegalRecords } from "@/lib/legal-data";
+import { CatalogueScreen, statusBadge } from "../common/CatalogueScreen";
+import { subsectionLabel } from "../common/subsection";
 
 interface LMInternationalLawProps {
   activeSubSection: string;
 }
 
-
-const LMInternationalLaw = ({ activeSubSection }: LMInternationalLawProps) => {
-  const { data: lawCompliance = [] } = useLegalRecords("international_law");
-  const handleAction = (action: string, item: string) => {
-    const toastMap: Record<string, () => void> = {
-      view: () => toast.info(`Viewing: ${item}`),
-      edit: () => toast.info(`Editing: ${item}`),
-      lock: () => toast.warning(`Locking: ${item}`),
-      publish: () => toast.success(`Published: ${item}`),
-      history: () => toast.info(`Viewing history: ${item}`),
-    };
-    toastMap[action]?.();
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-600 to-cyan-800 flex items-center justify-center shadow-lg">
-          <Globe className="w-7 h-7 text-primary-foreground" />
-        </div>
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">International Law Compliance</h1>
-          <p className="text-muted-foreground">Global regulatory compliance management</p>
-        </div>
-      </div>
-
-      {/* Compliance Cards */}
-      <Card className="bg-card/50 border-border/50">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-cyan-400" />
-            Compliance Status
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {lawCompliance.map((law) => (
-              <motion.div
-                key={law.id}
-                whileHover={{ scale: 1.01 }}
-                className="flex items-center justify-between p-4 rounded-lg bg-surface/50 border border-border"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-cyan-600/20 flex items-center justify-center">
-                    <FileText className="w-5 h-5 text-cyan-400" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-foreground">{law.name}</p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <Badge variant="outline" className="text-xs">{law.region}</Badge>
-                      <span className="text-xs text-muted-foreground">Coverage: {law.coverage}</span>
-                      <span className="text-xs text-muted-foreground">Last Audit: {law.lastAudit}</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge className={law.status === "compliant" ? "bg-emerald-500/20 text-emerald-400" : law.status === "review" ? "bg-yellow-500/20 text-yellow-400" : "bg-blue-500/20 text-blue-400"}>
-                    {law.status}
-                  </Badge>
-                  <div className="flex gap-1">
-                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleAction("view", law.name)}>
-                      <Eye className="w-4 h-4" />
-                    </Button>
-                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleAction("edit", law.name)}>
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleAction("lock", law.name)}>
-                      <Lock className="w-4 h-4" />
-                    </Button>
-                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleAction("publish", law.name)}>
-                      <CheckCircle className="w-4 h-4" />
-                    </Button>
-                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleAction("history", law.name)}>
-                      <History className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-};
+const LMInternationalLaw = ({ activeSubSection }: LMInternationalLawProps) => (
+  <CatalogueScreen
+    title="International Law Compliance"
+    description="Regulation coverage across every operating region"
+    icon={Globe}
+    category="international_law"
+    tableTitle="Regulatory Coverage"
+    focusLabel={subsectionLabel(activeSubSection)}
+    columns={[
+      { key: "name", header: "Regulation" },
+      { key: "region", header: "Region" },
+      { key: "coverage", header: "Coverage" },
+      { key: "lastAudit", header: "Last audit" },
+      { key: "status", header: "Status", render: (r) => statusBadge(String(r.status)) },
+    ]}
+    actions={[
+      { label: "Mark compliant", status: "compliant", action: "Compliance Reviewed", icon: CheckCircle, confirm: false },
+      { label: "Flag review", status: "review", action: "Compliance Flagged For Review", icon: AlertTriangle, confirm: true },
+    ]}
+  />
+);
 
 export default LMInternationalLaw;
