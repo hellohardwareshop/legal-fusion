@@ -1,151 +1,33 @@
-import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { CheckCircle, Brain, UserCheck, Crown, Lock, Upload, Eye, Edit, History, XCircle } from "lucide-react";
-import { toast } from "sonner";
+import { CheckCircle, XCircle, Lock } from "lucide-react";
 
-import { useLegalRecords, useUpdateRecordStatus } from "@/lib/legal-data";
+import { CatalogueScreen, statusBadge } from "../common/CatalogueScreen";
+import { subsectionLabel } from "../common/subsection";
 
 interface LMApprovalControlProps {
   activeSubSection: string;
 }
 
-
-const LMApprovalControl = ({ activeSubSection }: LMApprovalControlProps) => {
-  const { data: approvalItems = [] } = useLegalRecords("approval");
-  const updateRecord = useUpdateRecordStatus();
-  const handleAction = (action: string, item: string) => {
-    const toastMap: Record<string, () => void> = {
-      view: () => toast.info(`Viewing: ${item}`),
-      approve: () => toast.success(`Approved: ${item}`),
-      reject: () => toast.error(`Rejected: ${item}`),
-      lock: () => toast.warning(`Locked: ${item}`),
-      unlock: () => toast.success(`Unlocked: ${item}`),
-      publish: () => toast.success(`Published: ${item}`),
-      history: () => toast.info(`Viewing history: ${item}`),
-    };
-    toastMap[action]?.();
-  };
-
-  const updateApproval = (item: (typeof approvalItems)[number], status: string, action: string) => {
-    updateRecord.mutate(
-      {
-        id: item.id,
-        category: "approval",
-        status,
-        action,
-        details: `${item.name} set to ${status}`,
-      },
-      {
-        onSuccess: () => toast.success(`${action}: ${item.name}`),
-        onError: (error) => toast.error(error.message),
-      },
-    );
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-600 to-green-800 flex items-center justify-center shadow-lg">
-          <CheckCircle className="w-7 h-7 text-primary-foreground" />
-        </div>
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Approval & Control</h1>
-          <p className="text-muted-foreground">Manage approvals and publishing workflow</p>
-        </div>
-      </div>
-
-      {/* Quick Actions */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        {[
-          { icon: Brain, label: "AI Review", onClick: () => handleAction("view", "AI Draft Review") },
-          { icon: UserCheck, label: "Manager Approval", onClick: () => handleAction("view", "Manager Approval") },
-          { icon: Crown, label: "Boss Override", onClick: () => handleAction("view", "Boss Override") },
-          { icon: Lock, label: "Lock Agreement", onClick: () => handleAction("lock", "Agreement") },
-          { icon: Upload, label: "Publish", onClick: () => handleAction("publish", "Agreement") },
-        ].map((action, index) => (
-          <motion.div
-            key={action.label}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-          >
-            <Card 
-              className="cursor-pointer hover:scale-105 transition-transform bg-green-500/10 border-green-500/30"
-              onClick={action.onClick}
-            >
-              <CardContent className="p-4 text-center">
-                <action.icon className="w-8 h-8 text-green-400 mx-auto mb-2" />
-                <p className="text-sm font-medium text-foreground">{action.label}</p>
-              </CardContent>
-            </Card>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Approval Queue */}
-      <Card className="bg-card/50 border-border/50">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <CheckCircle className="w-5 h-5 text-green-400" />
-            Approval Queue
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {approvalItems.map((item) => (
-              <motion.div
-                key={item.id}
-                whileHover={{ scale: 1.01 }}
-                className="flex items-center justify-between p-4 rounded-lg bg-surface/50 border border-border"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-green-600/20 flex items-center justify-center">
-                    <CheckCircle className="w-5 h-5 text-green-400" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-foreground">{item.name}</p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <Badge variant="outline" className="text-xs">{item.type}</Badge>
-                      <span className="text-xs text-muted-foreground">{item.count} items</span>
-                      {item.priority !== "N/A" && (
-                        <Badge className={item.priority === "Critical" ? "bg-red-500/20 text-red-400" : item.priority === "High" ? "bg-orange-500/20 text-orange-400" : "bg-blue-500/20 text-blue-400"}>
-                          {item.priority}
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge className={item.status === "active" ? "bg-emerald-500/20 text-emerald-400" : item.status === "locked" ? "bg-amber-500/20 text-amber-400" : "bg-yellow-500/20 text-yellow-400"}>
-                    {item.status}
-                  </Badge>
-                  <div className="flex gap-1">
-                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleAction("view", item.name)}>
-                      <Eye className="w-4 h-4" />
-                    </Button>
-                    <Button size="icon" variant="ghost" className="h-8 w-8" disabled={updateRecord.isPending} onClick={() => updateApproval(item, "approved", "Approval Granted")}>
-                      <CheckCircle className="w-4 h-4" />
-                    </Button>
-                    <Button size="icon" variant="ghost" className="h-8 w-8" disabled={updateRecord.isPending} onClick={() => updateApproval(item, "rejected", "Approval Rejected")}>
-                      <XCircle className="w-4 h-4" />
-                    </Button>
-                    <Button size="icon" variant="ghost" className="h-8 w-8" disabled={updateRecord.isPending} onClick={() => updateApproval(item, "locked", "Approval Locked")}>
-                      <Lock className="w-4 h-4" />
-                    </Button>
-                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => handleAction("history", item.name)}>
-                      <History className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-};
+const LMApprovalControl = ({ activeSubSection }: LMApprovalControlProps) => (
+  <CatalogueScreen
+    title="Approval & Control"
+    description="Manager review queue with full decision history"
+    icon={CheckCircle}
+    category="approval"
+    tableTitle="Approval Queue"
+    focusLabel={subsectionLabel(activeSubSection)}
+    columns={[
+      { key: "name", header: "Item" },
+      { key: "type", header: "Type" },
+      { key: "requestedBy", header: "Requested by" },
+      { key: "impact", header: "Impact" },
+      { key: "status", header: "Status", render: (r) => statusBadge(String(r.status)) },
+    ]}
+    actions={[
+      { label: "Approve", status: "approved", action: "Approval Given", icon: CheckCircle, confirm: false },
+      { label: "Reject", status: "rejected", action: "Approval Rejected", icon: XCircle, confirm: true },
+      { label: "Lock", status: "locked", action: "Approval Locked", icon: Lock, confirm: true },
+    ]}
+  />
+);
 
 export default LMApprovalControl;

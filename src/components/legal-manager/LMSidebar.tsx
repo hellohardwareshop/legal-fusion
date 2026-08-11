@@ -24,6 +24,11 @@ import {
   ArrowLeft,
   Lock,
   KeyRound,
+  FolderLock,
+  ShieldCheck,
+  Radar,
+  ScrollText,
+  AlertTriangle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -35,6 +40,9 @@ interface LMSidebarProps {
   activeSection: string;
   setActiveSection: (section: string) => void;
   onBack?: () => void;
+  /** Called after any navigation — used to close the mobile drawer. */
+  onNavigate?: () => void;
+  className?: string;
 }
 
 interface MenuItem {
@@ -222,6 +230,36 @@ export const menuItems: MenuItem[] = [
     ],
   },
   {
+    id: "documents",
+    label: "Document Vault",
+    icon: FolderLock,
+  },
+  {
+    id: "compliance",
+    label: "Policy Compliance",
+    icon: ShieldCheck,
+  },
+  {
+    id: "violations",
+    label: "Violations & Cases",
+    icon: AlertTriangle,
+  },
+  {
+    id: "ai-alerts",
+    label: "AI Legal Alerts",
+    icon: KeyRound,
+  },
+  {
+    id: "trademark-monitor",
+    label: "Trademark Monitor",
+    icon: Radar,
+  },
+  {
+    id: "legal-logs",
+    label: "Legal Logs",
+    icon: ScrollText,
+  },
+  {
     id: "settings",
     label: "Settings",
     icon: Settings,
@@ -234,7 +272,7 @@ export const menuItems: MenuItem[] = [
   },
 ];
 
-const LMSidebar = ({ activeSection, setActiveSection, onBack }: LMSidebarProps) => {
+const LMSidebar = ({ activeSection, setActiveSection, onBack, onNavigate, className }: LMSidebarProps) => {
   const [expandedItems, setExpandedItems] = useState<string[]>(["dashboard"]);
 
   const toggleExpand = (id: string) => {
@@ -244,17 +282,14 @@ const LMSidebar = ({ activeSection, setActiveSection, onBack }: LMSidebarProps) 
   };
 
   const handleItemClick = (id: string, hasChildren: boolean) => {
-    if (hasChildren) {
-      toggleExpand(id);
-    } else {
-      setActiveSection(id);
-      toast.success(`Navigated to ${id.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}`);
-    }
+    if (hasChildren) toggleExpand(id);
+    setActiveSection(id);
+    onNavigate?.();
   };
 
-  const handleChildClick = (childId: string, parentId: string) => {
+  const handleChildClick = (childId: string) => {
     setActiveSection(childId);
-    toast.info(`Viewing: ${childId.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())}`);
+    onNavigate?.();
   };
 
   return (
@@ -262,7 +297,11 @@ const LMSidebar = ({ activeSection, setActiveSection, onBack }: LMSidebarProps) 
       initial={{ x: -24, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
-      className="w-[264px] shrink-0 h-full flex flex-col border-r border-sidebar-border bg-sidebar/80 backdrop-blur-xl"
+      aria-label="Legal Manager navigation"
+      className={cn(
+        "w-[264px] shrink-0 h-full flex flex-col border-r border-sidebar-border bg-sidebar/80 backdrop-blur-xl",
+        className,
+      )}
     >
       {/* Header */}
       <div className="p-4 border-b border-sidebar-border">
@@ -315,6 +354,9 @@ const LMSidebar = ({ activeSection, setActiveSection, onBack }: LMSidebarProps) 
             return (
               <div key={item.id}>
                 <button
+                  type="button"
+                  aria-expanded={hasChildren ? isExpanded : undefined}
+                  aria-current={activeSection === item.id ? "page" : undefined}
                   onClick={() => handleItemClick(item.id, hasChildren)}
                   className={cn(
                     "group relative w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left transition-all duration-200",
@@ -347,7 +389,9 @@ const LMSidebar = ({ activeSection, setActiveSection, onBack }: LMSidebarProps) 
                       {item.children?.map((child) => (
                         <button
                           key={child.id}
-                          onClick={() => handleChildClick(child.id, item.id)}
+                          type="button"
+                          aria-current={activeSection === child.id ? "page" : undefined}
+                          onClick={() => handleChildClick(child.id)}
                           className={cn(
                             "w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-left transition-all duration-200",
                             activeSection === child.id

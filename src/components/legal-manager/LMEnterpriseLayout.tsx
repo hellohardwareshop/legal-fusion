@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Scale } from "lucide-react";
+import { Menu, Scale } from "lucide-react";
 import LMSidebar, { menuItems } from "./LMSidebar";
 import { PageShell, ModuleHero } from "@/components/layout/PageShell";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 import LMDashboard from "./screens/LMDashboard";
 import LMAgreementEngine from "./screens/LMAgreementEngine";
@@ -19,6 +21,12 @@ import LMApprovalControl from "./screens/LMApprovalControl";
 import LMAuditLogs from "./screens/LMAuditLogs";
 import LMNotifications from "./screens/LMNotifications";
 import LMSettings from "./screens/LMSettings";
+import LMDocumentVault from "./LMDocumentVault";
+import LMPolicyCompliance from "./LMPolicyCompliance";
+import LMViolations from "./LMViolations";
+import LMLegalAlerts from "./LMLegalAlerts";
+import LMTrademarkMonitor from "./LMTrademarkMonitor";
+import LMLegalLogs from "./LMLegalLogs";
 
 interface LMEnterpriseLayoutProps {
   onBack?: () => void;
@@ -26,15 +34,23 @@ interface LMEnterpriseLayoutProps {
 
 const LMEnterpriseLayout = ({ onBack }: LMEnterpriseLayoutProps) => {
   const [activeSection, setActiveSection] = useState("dashboard");
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const renderContent = () => {
+    if (activeSection === "documents") return <LMDocumentVault />;
+    if (activeSection === "compliance") return <LMPolicyCompliance />;
+    if (activeSection === "violations") return <LMViolations />;
+    if (activeSection === "ai-alerts") return <LMLegalAlerts />;
+    if (activeSection === "trademark-monitor") return <LMTrademarkMonitor />;
+    if (activeSection === "legal-logs") return <LMLegalLogs />;
+
     // Dashboard sections
     if (activeSection.startsWith("dashboard")) {
       return <LMDashboard activeSubSection={activeSection} />;
     }
-    
+
     // Agreement Engine sections
-    if (activeSection === "agreement-engine" || 
+    if (activeSection === "agreement-engine" ||
         ["ai-generator", "product-agreement", "role-agreement", "country-agreement", "language-detection", "version-control"].includes(activeSection)) {
       return <LMAgreementEngine activeSubSection={activeSection} />;
     }
@@ -117,7 +133,6 @@ const LMEnterpriseLayout = ({ onBack }: LMEnterpriseLayoutProps) => {
       return <LMSettings activeSubSection={activeSection} />;
     }
 
-    // Default
     return <LMDashboard activeSubSection={activeSection} />;
   };
 
@@ -130,14 +145,39 @@ const LMEnterpriseLayout = ({ onBack }: LMEnterpriseLayoutProps) => {
   const heroEyebrow = child ? parent?.label : "Legal & Compliance";
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-dvh overflow-hidden bg-background">
       <LMSidebar
         activeSection={activeSection}
         setActiveSection={setActiveSection}
         onBack={onBack}
+        className="hidden lg:flex"
       />
 
       <div className="min-w-0 flex-1 overflow-auto">
+        <div className="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-background/85 px-4 py-3 backdrop-blur-xl lg:hidden">
+          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="icon" aria-label="Open navigation">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[280px] border-sidebar-border p-0">
+              <SheetTitle className="sr-only">Legal Manager navigation</SheetTitle>
+              <LMSidebar
+                activeSection={activeSection}
+                setActiveSection={setActiveSection}
+                onBack={onBack}
+                onNavigate={() => setMobileOpen(false)}
+                className="flex w-full border-r-0"
+              />
+            </SheetContent>
+          </Sheet>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold text-foreground">{heroTitle}</p>
+            <p className="truncate text-xs text-muted-foreground">Legal Manager</p>
+          </div>
+        </div>
+
         <motion.div
           key={activeSection}
           initial={{ opacity: 0, y: 10 }}
@@ -151,13 +191,12 @@ const LMEnterpriseLayout = ({ onBack }: LMEnterpriseLayoutProps) => {
               description="Live legal operations for Software Vala — agreements, compliance, IP and audit in one workspace."
               icon={HeroIcon}
             />
-            {renderContent()}
+            <main>{renderContent()}</main>
           </PageShell>
         </motion.div>
       </div>
     </div>
   );
 };
-
 
 export default LMEnterpriseLayout;
