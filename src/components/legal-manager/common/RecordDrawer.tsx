@@ -85,13 +85,13 @@ export const RecordDrawer = ({
                       <p className="text-xs uppercase tracking-wide text-muted-foreground">
                         {labelise(key)}
                       </p>
-                      <p className="mt-1 break-words text-sm text-foreground">
+                      <div className="mt-1 break-words text-sm text-foreground">
                         {key === "status" ? (
                           <Badge variant="outline">{renderValue(value)}</Badge>
                         ) : (
                           renderValue(value)
                         )}
-                      </p>
+                      </div>
                     </div>
                   ))}
                 </div>
