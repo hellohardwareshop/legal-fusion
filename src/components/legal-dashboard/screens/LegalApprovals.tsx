@@ -1,115 +1,90 @@
 import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Check, X } from "lucide-react";
+import { Check, CheckCircle, X } from "lucide-react";
 import { toast } from "sonner";
 
+import { Badge } from "@/components/ui/badge";
+import { CatalogueSection } from "@/components/legal-manager/common/CatalogueSection";
+import { ConfirmButton } from "@/components/legal-manager/common/ConfirmButton";
+import { statusBadge } from "@/components/legal-manager/common/CatalogueScreen";
 import { useLegalRecords, useUpdateRecordStatus } from "@/lib/legal-data";
 
 const LegalApprovals = () => {
-  const { data: approvals = [] } = useLegalRecords("approval");
+  const { data: approvals = [], isLoading, isError, error, refetch } = useLegalRecords("approval");
   const updateRecord = useUpdateRecordStatus();
 
-  const handleApprove = (id: string, ref: string) => {
+  const decide = (id: string, ref: string, approve: boolean) =>
     updateRecord.mutate(
       {
         id,
         category: "approval",
-        status: "approved",
-        action: "Approval Given",
-        details: `Approval ${ref} approved`,
+        status: approve ? "approved" : "rejected",
+        action: approve ? "Approval Given" : "Approval Rejected",
+        details: `Approval ${ref} ${approve ? "approved" : "rejected"}`,
       },
-      { onSuccess: () => toast.success(`Approval ${ref} approved`) },
-    );
-  };
-
-  const handleReject = (id: string, ref: string) => {
-    updateRecord.mutate(
       {
-        id,
-        category: "approval",
-        status: "rejected",
-        action: "Approval Rejected",
-        details: `Approval ${ref} rejected`,
+        onSuccess: () =>
+          approve ? toast.success(`Approval ${ref} approved`) : toast.error(`Approval ${ref} rejected`),
+        onError: (mutationError) => toast.error(mutationError.message),
       },
-      { onSuccess: () => toast.error(`Approval ${ref} rejected`) },
     );
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "pending": return "bg-yellow-500/20 text-yellow-400";
-      case "approved": return "bg-emerald-500/20 text-emerald-400";
-      case "rejected": return "bg-red-500/20 text-red-400";
-      default: return "bg-muted/20 text-muted-foreground";
-    }
-  };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="space-y-6"
-    >
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold text-primary-foreground">Approvals</h2>
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-semibold text-foreground">Approvals</h2>
         <Badge className="bg-yellow-500/20 text-yellow-400">
           {approvals.filter((a) => a.status === "pending").length} Pending
         </Badge>
       </div>
 
-      <Card className="bg-card/50 border-border">
-        <CardHeader>
-          <CardTitle className="text-amber-400">Approval Queue</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow className="border-border">
-                <TableHead className="text-muted-foreground">Item</TableHead>
-                <TableHead className="text-muted-foreground">Requested By</TableHead>
-                <TableHead className="text-muted-foreground">Impact</TableHead>
-                <TableHead className="text-muted-foreground">Status</TableHead>
-                <TableHead className="text-muted-foreground">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {approvals.map((approval) => (
-                <TableRow key={approval.id} className="border-border">
-                  <TableCell className="text-primary-foreground font-medium">{approval.name}</TableCell>
-                  <TableCell className="text-foreground font-mono text-sm">{approval.requestedBy}</TableCell>
-                  <TableCell className="text-foreground">{approval.impact}</TableCell>
-                  <TableCell>
-                    <Badge className={getStatusColor(approval.status)}>{approval.status}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    {approval.status === "pending" && (
-                      <div className="flex gap-2">
-                        <Button
-                          size="sm"
-                          className="bg-emerald-600 hover:bg-emerald-700"
-                          onClick={() => handleApprove(approval.id, approval.ref_code ?? approval.name)}
-                        >
-                          <Check className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => handleReject(approval.id, approval.ref_code ?? approval.name)}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      <CatalogueSection
+        title="Approval Queue"
+        icon={CheckCircle}
+        records={approvals}
+        isLoading={isLoading}
+        isError={isError}
+        error={error as { message?: string } | null}
+        onRetry={() => void refetch()}
+        emptyTitle="Queue is clear"
+        emptyDescription="Nothing is waiting for a decision right now."
+        columns={[
+          { key: "name", header: "Item" },
+          { key: "requestedBy", header: "Requested By", className: "font-mono text-sm" },
+          { key: "impact", header: "Impact" },
+          { key: "status", header: "Status", render: (r) => statusBadge(String(r.status)) },
+        ]}
+        rowActions={(approval) => {
+          if (approval.status !== "pending") return null;
+          const ref = approval.ref_code ?? approval.name;
+          return (
+            <>
+              <ConfirmButton
+                size="sm"
+                title="Approve this item?"
+                description={`${ref} will be marked approved and recorded in the audit trail.`}
+                confirmLabel="Approve"
+                aria-label={`Approve ${ref}`}
+                disabled={updateRecord.isPending}
+                onConfirm={() => decide(approval.id, ref, true)}
+              >
+                <Check className="h-4 w-4" />
+              </ConfirmButton>
+              <ConfirmButton
+                size="sm"
+                variant="destructive"
+                title="Reject this item?"
+                description={`${ref} will be marked rejected and recorded in the audit trail.`}
+                confirmLabel="Reject"
+                aria-label={`Reject ${ref}`}
+                disabled={updateRecord.isPending}
+                onConfirm={() => decide(approval.id, ref, false)}
+              >
+                <X className="h-4 w-4" />
+              </ConfirmButton>
+            </>
+          );
+        }}
+      />
     </motion.div>
   );
 };

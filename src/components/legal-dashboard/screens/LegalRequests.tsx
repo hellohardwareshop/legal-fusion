@@ -1,152 +1,115 @@
 import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Eye, MessageSquare, AlertTriangle } from "lucide-react";
+import { AlertTriangle, Eye, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 
-import { useLegalRecords, useLogAction, useUpdateRecordStatus } from "@/lib/legal-data";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { CatalogueSection } from "@/components/legal-manager/common/CatalogueSection";
+import { ConfirmButton } from "@/components/legal-manager/common/ConfirmButton";
+import { statusBadge } from "@/components/legal-manager/common/CatalogueScreen";
+import { useLegalRecords, useUpdateRecordStatus } from "@/lib/legal-data";
+
+const priorityBadge = (priority: string) => {
+  const tone =
+    priority === "critical"
+      ? "bg-red-500/20 text-red-400"
+      : priority === "high"
+        ? "bg-orange-500/20 text-orange-400"
+        : priority === "medium"
+          ? "bg-yellow-500/20 text-yellow-400"
+          : priority === "low"
+            ? "bg-blue-500/20 text-blue-400"
+            : "bg-muted/20 text-muted-foreground";
+  return <Badge className={tone}>{priority || "normal"}</Badge>;
+};
 
 const LegalRequests = () => {
-  const { data: requests = [] } = useLegalRecords("legal_request");
-  const logAction = useLogAction();
+  const { data: requests = [], isLoading, isError, error, refetch } = useLegalRecords("legal_request");
   const updateRecord = useUpdateRecordStatus();
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "critical": return "bg-red-500/20 text-red-400";
-      case "high": return "bg-orange-500/20 text-orange-400";
-      case "medium": return "bg-yellow-500/20 text-yellow-400";
-      case "low": return "bg-blue-500/20 text-blue-400";
-      default: return "bg-muted/20 text-muted-foreground";
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "pending": return "bg-muted/20 text-muted-foreground";
-      case "in_progress": return "bg-blue-500/20 text-blue-400";
-      case "resolved": return "bg-emerald-500/20 text-emerald-400";
-      case "escalated": return "bg-purple-500/20 text-purple-400";
-      default: return "bg-muted/20 text-muted-foreground";
-    }
-  };
-
-  const handleReview = (id: string, ref: string) => {
+  const mutate = (id: string, ref: string, status: string, action: string, details: string, message: () => void) => {
     updateRecord.mutate(
-      {
-        id,
-        category: "legal_request",
-        status: "in_progress",
-        action: "Legal Request Reviewed",
-        details: `Request ${ref} under review`,
-      },
-      { onSuccess: () => toast.info(`Reviewing request ${ref}`) },
+      { id, category: "legal_request", status, action, details },
+      { onSuccess: message, onError: (mutationError) => toast.error(mutationError.message) },
     );
-  };
-
-  const handleRespond = (id: string, ref: string) => {
-    updateRecord.mutate(
-      {
-        id,
-        category: "legal_request",
-        status: "resolved",
-        action: "Legal Request Resolved",
-        details: `Response sent for request ${ref}`,
-      },
-      { onSuccess: () => toast.success(`Response sent for request ${ref}`) },
-    );
-  };
-
-  const handleEscalate = (id: string, ref: string) => {
-    updateRecord.mutate(
-      {
-        id,
-        category: "legal_request",
-        status: "escalated",
-        action: "Legal Request Escalated",
-        details: `Request ${ref} escalated to Super Admin`,
-      },
-      { onSuccess: () => toast.warning(`Request ${ref} escalated to Super Admin`) },
-    );
-    logAction.reset();
   };
 
   const pendingCount = requests.filter((r) => r.status === "pending").length;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="space-y-6"
-    >
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold text-primary-foreground">Legal Requests</h2>
-        <Badge className="bg-amber-500/20 text-amber-400">{pendingCount} Pending</Badge>
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-semibold text-foreground">Legal Requests</h2>
+        <Badge className="bg-primary/15 text-primary">{pendingCount} Pending</Badge>
       </div>
 
-      <Card className="bg-card/50 border-border">
-        <CardHeader>
-          <CardTitle className="text-amber-400">All Requests</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow className="border-border">
-                <TableHead className="text-muted-foreground">Request ID</TableHead>
-                <TableHead className="text-muted-foreground">Raised By</TableHead>
-                <TableHead className="text-muted-foreground">Type</TableHead>
-                <TableHead className="text-muted-foreground">Priority</TableHead>
-                <TableHead className="text-muted-foreground">Status</TableHead>
-                <TableHead className="text-muted-foreground">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {requests.map((request) => (
-                <TableRow key={request.id} className="border-border">
-                  <TableCell className="text-amber-400 font-mono">{request.ref_code}</TableCell>
-                  <TableCell className="text-foreground font-mono text-sm">{request.raisedBy}</TableCell>
-                  <TableCell className="text-primary-foreground">{request.type || request.name}</TableCell>
-                  <TableCell>
-                    <Badge className={getPriorityColor(request.priority)}>{request.priority}</Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge className={getStatusColor(request.status)}>
-                      {request.status.replace("_", " ")}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleReview(request.id, request.ref_code ?? request.name)}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleRespond(request.id, request.ref_code ?? request.name)}
-                      >
-                        <MessageSquare className="h-4 w-4 text-emerald-400" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleEscalate(request.id, request.ref_code ?? request.name)}
-                      >
-                        <AlertTriangle className="h-4 w-4 text-yellow-400" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      <CatalogueSection
+        title="All Requests"
+        icon={MessageSquare}
+        records={requests}
+        isLoading={isLoading}
+        isError={isError}
+        error={error as { message?: string } | null}
+        onRetry={() => void refetch()}
+        emptyTitle="No legal requests"
+        emptyDescription="Requests raised by other teams will show up here."
+        columns={[
+          { key: "ref_code", header: "Request ID", className: "font-mono text-primary" },
+          { key: "raisedBy", header: "Raised By", className: "font-mono text-sm" },
+          { key: "type", header: "Type", render: (r) => String(r.type || r.name) },
+          { key: "priority", header: "Priority", render: (r) => priorityBadge(String(r.priority ?? "")) },
+          { key: "status", header: "Status", render: (r) => statusBadge(String(r.status)) },
+        ]}
+        rowActions={(request) => {
+          const ref = request.ref_code ?? request.name;
+          return (
+            <>
+              <Button
+                size="sm"
+                variant="ghost"
+                aria-label={`Review request ${ref}`}
+                disabled={updateRecord.isPending}
+                onClick={() =>
+                  mutate(request.id, ref, "in_progress", "Legal Request Reviewed", `Request ${ref} under review`, () =>
+                    toast.info(`Reviewing request ${ref}`),
+                  )
+                }
+              >
+                <Eye className="h-4 w-4" />
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                aria-label={`Resolve request ${ref}`}
+                disabled={updateRecord.isPending}
+                onClick={() =>
+                  mutate(request.id, ref, "resolved", "Legal Request Resolved", `Response sent for request ${ref}`, () =>
+                    toast.success(`Response sent for request ${ref}`),
+                  )
+                }
+              >
+                <MessageSquare className="h-4 w-4 text-emerald-400" />
+              </Button>
+              <ConfirmButton
+                size="sm"
+                variant="ghost"
+                title="Escalate to Super Admin?"
+                description={`Request ${ref} is escalated and the action is written to the audit trail.`}
+                confirmLabel="Escalate"
+                aria-label={`Escalate request ${ref}`}
+                disabled={updateRecord.isPending}
+                onConfirm={() =>
+                  mutate(request.id, ref, "escalated", "Legal Request Escalated", `Request ${ref} escalated to Super Admin`, () =>
+                    toast.warning(`Request ${ref} escalated to Super Admin`),
+                  )
+                }
+              >
+                <AlertTriangle className="h-4 w-4 text-yellow-400" />
+              </ConfirmButton>
+            </>
+          );
+        }}
+      />
     </motion.div>
   );
 };

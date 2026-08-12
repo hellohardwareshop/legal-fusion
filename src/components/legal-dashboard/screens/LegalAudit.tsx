@@ -1,10 +1,10 @@
+import { useMemo } from "react";
 import { motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Shield, AlertTriangle } from "lucide-react";
+import { AlertTriangle, Shield } from "lucide-react";
 
-import { useLegalLogs } from "@/lib/legal-data";
+import { Badge } from "@/components/ui/badge";
+import { CatalogueSection } from "@/components/legal-manager/common/CatalogueSection";
+import { useLegalLogs, type LegalRecord } from "@/lib/legal-data";
 
 const RESULT_BY_ACTION: Record<string, string> = {
   "Policy Updated": "Approved",
@@ -23,80 +23,102 @@ const RESULT_BY_ACTION: Record<string, string> = {
   "Approval Rejected": "Rejected",
 };
 
-const LegalAudit = () => {
-  const { data: logs = [] } = useLegalLogs();
+const resultColor = (result: string) => {
+  switch (result) {
+    case "Approved":
+    case "Compliant":
+    case "Resolved":
+      return "text-emerald-400";
+    case "Pending Approval":
+      return "text-yellow-400";
+    case "Rejected":
+    case "Flagged Risk":
+      return "text-red-400";
+    case "Escalated":
+      return "text-purple-400";
+    default:
+      return "text-muted-foreground";
+  }
+};
 
-  const getResultColor = (result: string) => {
-    switch (result) {
-      case "Approved": case "Compliant": case "Resolved": return "text-emerald-400";
-      case "Pending Approval": return "text-yellow-400";
-      case "Rejected": case "Flagged Risk": return "text-red-400";
-      case "Escalated": return "text-purple-400";
-      default: return "text-muted-foreground";
-    }
-  };
+const LegalAudit = () => {
+  const { data: logs = [], isLoading, isError, error, refetch } = useLegalLogs();
+
+  const records = useMemo<LegalRecord[]>(
+    () =>
+      logs.map((log, index) => {
+        const result = RESULT_BY_ACTION[log.action] ?? "Logged";
+        return {
+          id: log.id,
+          ref_code: log.ref_code ?? null,
+          name: log.action,
+          type: String(log.category ?? "audit"),
+          status: result,
+          position: index,
+          actor: log.actor,
+          time: new Date(log.logged_at).toLocaleString("sv-SE").replace("T", " "),
+          approvalRef:
+            result === "Approved" || result === "Pending Approval" || result === "Escalated"
+              ? (log.ref_code ?? "N/A")
+              : "N/A",
+          details: log.details,
+        } as LegalRecord;
+      }),
+    [logs],
+  );
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="space-y-6"
-    >
-      <div className="flex justify-between items-center">
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <Shield className="h-6 w-6 text-amber-400" />
-          <h2 className="text-xl font-semibold text-primary-foreground">Audit Trail</h2>
+          <Shield className="h-6 w-6 text-primary" aria-hidden="true" />
+          <h2 className="text-xl font-semibold text-foreground">Audit Trail</h2>
         </div>
         <Badge className="bg-muted text-foreground">Read Only</Badge>
       </div>
 
-      <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 flex items-center gap-3">
-        <AlertTriangle className="h-5 w-5 text-yellow-400" />
-        <p className="text-yellow-400 text-sm">
+      <div className="flex items-center gap-3 rounded-lg border border-yellow-500/30 bg-yellow-500/10 p-4">
+        <AlertTriangle className="h-5 w-5 text-yellow-400" aria-hidden="true" />
+        <p className="text-sm text-yellow-400">
           This is an immutable audit log. No modifications or exports are permitted.
         </p>
       </div>
 
-      <Card className="bg-card/50 border-border">
-        <CardHeader>
-          <CardTitle className="text-amber-400">Activity Log</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow className="border-border">
-                <TableHead className="text-muted-foreground">Time</TableHead>
-                <TableHead className="text-muted-foreground">Action</TableHead>
-                <TableHead className="text-muted-foreground">Actor</TableHead>
-                <TableHead className="text-muted-foreground">Result</TableHead>
-                <TableHead className="text-muted-foreground">Approval Reference</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {logs.map((log) => {
-                const result = RESULT_BY_ACTION[log.action] ?? "Logged";
-                const approvalRef =
-                  result === "Approved" || result === "Pending Approval" || result === "Escalated"
-                    ? log.ref_code
-                    : "N/A";
-                return (
-                  <TableRow key={log.id} className="border-border">
-                    <TableCell className="text-foreground font-mono text-sm">
-                      {new Date(log.logged_at).toLocaleString("sv-SE").replace("T", " ")}
-                    </TableCell>
-                    <TableCell className="text-primary-foreground">{log.action}</TableCell>
-                    <TableCell className="text-foreground font-mono text-sm">{log.actor}</TableCell>
-                    <TableCell className={getResultColor(result)}>{result}</TableCell>
-                    <TableCell className={approvalRef === "N/A" ? "text-muted-foreground" : "text-amber-400 font-mono text-sm"}>
-                      {approvalRef}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      <CatalogueSection
+        title="Activity Log"
+        icon={Shield}
+        records={records}
+        isLoading={isLoading}
+        isError={isError}
+        error={error as { message?: string } | null}
+        onRetry={() => void refetch()}
+        pageSize={12}
+        emptyTitle="No audit entries"
+        emptyDescription="Every action taken in the workspace is recorded here."
+        columns={[
+          { key: "time", header: "Time", className: "font-mono text-sm" },
+          { key: "name", header: "Action" },
+          { key: "actor", header: "Actor", className: "font-mono text-sm" },
+          {
+            key: "status",
+            header: "Result",
+            render: (r) => <span className={resultColor(String(r.status))}>{String(r.status)}</span>,
+          },
+          {
+            key: "approvalRef",
+            header: "Approval Reference",
+            render: (r) => (
+              <span
+                className={
+                  r.approvalRef === "N/A" ? "text-muted-foreground" : "font-mono text-sm text-primary"
+                }
+              >
+                {String(r.approvalRef)}
+              </span>
+            ),
+          },
+        ]}
+      />
     </motion.div>
   );
 };
