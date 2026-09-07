@@ -121,10 +121,15 @@ const LegalManagerDashboard = () => {
     <div className="min-h-screen overflow-x-hidden bg-background flex select-none">
       {sidebarOpen && <div className="fixed inset-0 z-20 bg-background/80 md:hidden" onClick={() => setSidebarOpen(false)} />}
       {/* Fixed Left Sidebar */}
-      <aside className={`z-30 w-64 bg-sidebar/85 backdrop-blur-xl border-r border-sidebar-border flex flex-col fixed h-full transition-transform md:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
-        <div className="p-4 border-b border-sidebar-border">
-          <h1 className="text-lg font-semibold text-foreground">Legal Manager</h1>
-          <p className="text-xs text-muted-foreground">Compliance Center</p>
+      <aside className={`fixed z-30 flex h-full w-[264px] flex-col border-r border-sidebar-border bg-sidebar/95 backdrop-blur-xl transition-transform md:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
+        <div className="border-b border-sidebar-border p-4">
+          <div className="flex items-center gap-3">
+            <div className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-sm font-bold text-primary-foreground shadow-sm">LM</div>
+            <div className="min-w-0">
+              <h1 className="truncate text-sm font-semibold text-foreground">Legal Manager</h1>
+              <p className="truncate text-xs text-muted-foreground">Compliance Center</p>
+            </div>
+          </div>
         </div>
 
         <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
@@ -132,10 +137,10 @@ const LegalManagerDashboard = () => {
             <button
               key={item.id}
               onClick={() => { setActiveScreen(item.id); setSidebarOpen(false); }}
-              className={`group relative w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
+              className={`group relative flex w-full items-center gap-3 rounded-lg px-3 py-2 transition-colors ${
                 activeScreen === item.id
-                  ? "bg-primary/12 text-foreground"
-                  : "text-muted-foreground hover:bg-surface/70 hover:text-foreground"
+                   ? "bg-primary/15 font-medium text-foreground"
+                   : "text-sidebar-foreground/75 hover:bg-sidebar-accent/55 hover:text-sidebar-accent-foreground"
               }`}
             >
               {activeScreen === item.id && (
@@ -160,9 +165,9 @@ const LegalManagerDashboard = () => {
       </aside>
 
       {/* Main Content Area */}
-      <div className="min-w-0 flex-1 md:ml-64 flex flex-col">
-        {/* Fixed Top Header */}
-        <header className="h-16 bg-background/80 backdrop-blur-xl border-b border-border flex items-center justify-between px-4 md:px-6 fixed top-0 right-0 left-0 md:left-64 z-10">
+      <div className="ml-0 flex min-w-0 flex-1 flex-col md:ml-[264px]">
+        {/* Mobile-only header; desktop navigation lives entirely in the sidebar. */}
+        <header className="fixed left-0 right-0 top-0 z-10 flex h-14 items-center justify-between border-b border-border bg-background/95 px-4 backdrop-blur-xl md:hidden">
           <div className="flex min-w-0 items-center gap-3">
             <Button size="icon" variant="ghost" className="md:hidden" onClick={() => setSidebarOpen((open) => !open)} aria-label="Toggle navigation">
               {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -171,7 +176,7 @@ const LegalManagerDashboard = () => {
             Legal Manager — Compliance Center
           </h2>
           </div>
-          <div className="flex items-center gap-4">
+           <div className="flex items-center gap-4">
             <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${getStatusColor()}`}>
               <Activity className="h-4 w-4" />
               <span className="hidden text-sm font-medium sm:inline">Compliance Status: {complianceStatus}</span>
@@ -180,7 +185,7 @@ const LegalManagerDashboard = () => {
         </header>
 
         {/* Main Content */}
-        <main className="min-w-0 flex-1 mt-16 overflow-auto">
+         <main className="mt-14 min-w-0 flex-1 overflow-auto md:mt-0">
           <PageShell>
             <ModuleHero
               eyebrow="Compliance Center"
