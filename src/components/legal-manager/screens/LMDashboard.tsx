@@ -143,18 +143,8 @@ const LMDashboard = ({ activeSubSection }: LMDashboardProps) => {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-4">
-        <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-primary to-primary/60 shadow-lg">
-          <Scale className="h-7 w-7 text-primary-foreground" />
-        </div>
-        <div className="min-w-0">
-          <h1 className="truncate text-xl font-bold text-foreground sm:text-2xl">Legal Dashboard</h1>
-          <p className="text-sm text-muted-foreground">Overview of all legal &amp; compliance matters</p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+    <div className="space-y-5" aria-label="Legal Dashboard">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
         {stats.map((stat, index) => (
           <motion.div
             key={stat.label}
@@ -162,7 +152,7 @@ const LMDashboard = ({ activeSubSection }: LMDashboardProps) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
           >
-            <Card className="h-full border-border/50 bg-card/50">
+            <Card className="h-full border-border bg-card/80">
               <CardContent className="p-4">
                 <div className="mb-2 flex items-center justify-between gap-2">
                   <stat.icon className={`h-5 w-5 shrink-0 ${TONES[stat.color]}`} aria-hidden="true" />
@@ -175,9 +165,9 @@ const LMDashboard = ({ activeSubSection }: LMDashboardProps) => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {secondary.map((item) => (
-          <Card key={item.label} className="border-border/50 bg-card/50">
+          <Card key={item.label} className="border-border bg-card/80">
             <CardContent className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 p-4">
               <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-primary/15">
                 <item.icon className="h-5 w-5 text-primary" aria-hidden="true" />
@@ -191,8 +181,8 @@ const LMDashboard = ({ activeSubSection }: LMDashboardProps) => {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <Card className="border-border/50 bg-card/50">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <Card className="border-border bg-card/80">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <Globe className="h-5 w-5 text-primary" aria-hidden="true" />
@@ -215,7 +205,7 @@ const LMDashboard = ({ activeSubSection }: LMDashboardProps) => {
           </CardContent>
         </Card>
 
-        <Card className="border-border/50 bg-card/50">
+        <Card className="border-border bg-card/80">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-base">
               <AlertTriangle className="h-5 w-5 text-red-400" aria-hidden="true" />
@@ -252,7 +242,7 @@ const LMDashboard = ({ activeSubSection }: LMDashboardProps) => {
         </Card>
       </div>
 
-      <Card className="border-border/50 bg-card/50">
+      <Card className="border-border bg-card/80">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             <Activity className="h-5 w-5 text-primary" aria-hidden="true" />

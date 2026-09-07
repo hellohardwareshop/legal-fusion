@@ -130,10 +130,10 @@ export const CatalogueSection = ({
   };
 
   return (
-    <Card className="bg-card/50 border-border/50">
-      <CardHeader className="gap-4">
+    <Card className="overflow-hidden border-border bg-card/80">
+      <CardHeader className="gap-3 border-b border-border p-4 sm:p-5">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:flex sm:flex-wrap sm:justify-between">
-          <CardTitle className="flex min-w-0 items-center gap-2">
+          <CardTitle className="flex min-w-0 items-center gap-2 text-base">
             {Icon && <Icon className="h-5 w-5 shrink-0 text-primary" />}
             <span className="truncate">{title}</span>
           </CardTitle>
@@ -142,7 +142,7 @@ export const CatalogueSection = ({
           </Badge>
         </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <div className="relative min-w-0 flex-1">
             <Search
               className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
@@ -196,7 +196,7 @@ export const CatalogueSection = ({
         )}
       </CardHeader>
 
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 p-0">
         <AsyncState
           isLoading={isLoading}
           isError={isError}
@@ -257,7 +257,7 @@ export const CatalogueSection = ({
                         setSelected(record);
                       }
                     }}
-                    className="cursor-pointer border-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+                     className="cursor-pointer border-border transition-colors hover:bg-muted/25 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
                   >
                     {columns.map((column) => (
                       <TableCell key={column.key} className={column.className}>
@@ -288,7 +288,7 @@ export const CatalogueSection = ({
           </div>
 
           {pageCount > 1 && (
-            <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center justify-between gap-3 border-t border-border px-4 py-3 sm:px-5">
               <p className="text-xs text-muted-foreground">
                 Page {currentPage + 1} of {pageCount}
               </p>

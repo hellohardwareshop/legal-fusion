@@ -299,25 +299,25 @@ const LMSidebar = ({ activeSection, setActiveSection, onBack, onNavigate, classN
       transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
       aria-label="Legal Manager navigation"
       className={cn(
-        "w-[264px] shrink-0 h-full flex flex-col border-r border-sidebar-border bg-sidebar/80 backdrop-blur-xl",
+        "h-full w-[264px] shrink-0 flex-col border-r border-sidebar-border bg-sidebar/95 backdrop-blur-xl",
         className,
       )}
     >
       {/* Header */}
-      <div className="p-4 border-b border-sidebar-border">
-        <div className="flex items-center gap-3 mb-3">
-          <Avatar className="w-10 h-10 rounded-xl icon3d">
+      <div className="border-b border-sidebar-border p-3">
+        <div className="mb-3 flex items-center gap-3 px-1">
+          <Avatar className="h-9 w-9 rounded-xl icon3d">
             <AvatarFallback className="rounded-xl bg-primary/15 text-primary font-semibold text-sm">
               LM
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
-            <h2 className="text-sm font-semibold text-foreground truncate">Legal Manager</h2>
+            <h2 className="truncate text-sm font-semibold text-foreground">Legal Manager</h2>
             <p className="text-xs text-muted-foreground truncate">Software Vala workspace</p>
           </div>
         </div>
 
-        <Badge className="w-full justify-center bg-primary/12 text-primary border border-primary/25 py-1.5 mb-3 rounded-lg font-medium tracking-wide">
+        <Badge className="mb-3 w-full justify-center rounded-lg border border-primary/25 bg-primary/10 py-1.5 font-medium text-primary">
           <Scale className="w-3 h-3 mr-1.5" />
           LEGAL MANAGER
         </Badge>
@@ -334,7 +334,7 @@ const LMSidebar = ({ activeSection, setActiveSection, onBack, onNavigate, classN
           </Button>
         )}
 
-        <div className="flex items-center gap-2 rounded-lg border border-border bg-surface/50 px-3 py-2">
+        <div className="flex items-center gap-2 rounded-lg border border-sidebar-border bg-sidebar-accent/35 px-3 py-2">
           <span className="w-1.5 h-1.5 rounded-full bg-accent-emerald animate-pulse" />
           <span className="text-[11px] leading-tight text-muted-foreground">
             AI assistance active · Human approval required
@@ -343,7 +343,7 @@ const LMSidebar = ({ activeSection, setActiveSection, onBack, onNavigate, classN
       </div>
 
       {/* Navigation */}
-      <ScrollArea className="flex-1 px-2 py-3">
+      <ScrollArea className="flex-1 px-2 py-2">
         <nav className="space-y-0.5">
           {menuItems.map((item) => {
             const Icon = item.icon;
@@ -359,16 +359,16 @@ const LMSidebar = ({ activeSection, setActiveSection, onBack, onNavigate, classN
                   aria-current={activeSection === item.id ? "page" : undefined}
                   onClick={() => handleItemClick(item.id, hasChildren)}
                   className={cn(
-                    "group relative w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-left transition-all duration-200",
+                    "group relative flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition-colors duration-150",
                     isActive
-                      ? "bg-primary/12 text-foreground"
-                      : "text-muted-foreground hover:bg-surface/70 hover:text-foreground"
+                      ? "bg-primary/15 font-medium text-foreground"
+                      : "text-sidebar-foreground/75 hover:bg-sidebar-accent/55 hover:text-sidebar-accent-foreground"
                   )}
                 >
                   {isActive && (
-                    <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r-full bg-primary" />
+                    <span className="absolute bottom-1.5 left-0 top-1.5 w-0.5 rounded-full bg-primary" />
                   )}
-                  <Icon className={cn("w-4 h-4 flex-shrink-0", isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground")} />
+                  <Icon className={cn("h-4 w-4 shrink-0", isActive ? "text-primary" : "text-sidebar-foreground/65 group-hover:text-sidebar-accent-foreground")} />
                   <span className="font-medium text-xs flex-1 truncate">{item.label}</span>
                   {hasChildren && (
                     <motion.div animate={{ rotate: isExpanded ? 180 : 0 }} transition={{ duration: 0.2 }}>
@@ -384,7 +384,7 @@ const LMSidebar = ({ activeSection, setActiveSection, onBack, onNavigate, classN
                       animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
                       transition={{ duration: 0.2 }}
-                      className="ml-5 mt-0.5 mb-1 space-y-0.5 border-l border-sidebar-border pl-2 overflow-hidden"
+                      className="mb-1 ml-4 mt-0.5 space-y-0.5 overflow-hidden border-l border-sidebar-border pl-2"
                     >
                       {item.children?.map((child) => (
                         <button
@@ -393,10 +393,10 @@ const LMSidebar = ({ activeSection, setActiveSection, onBack, onNavigate, classN
                           aria-current={activeSection === child.id ? "page" : undefined}
                           onClick={() => handleChildClick(child.id)}
                           className={cn(
-                            "w-full flex items-center gap-2 px-2 py-1.5 rounded-lg text-left transition-all duration-200",
+                            "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left transition-colors duration-150",
                             activeSection === child.id
                               ? "bg-primary/10 text-primary"
-                              : "text-muted-foreground/80 hover:text-foreground hover:bg-surface/60"
+                              : "text-sidebar-foreground/65 hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
                           )}
                         >
                           <ChevronRight className="w-3 h-3 opacity-60" />
