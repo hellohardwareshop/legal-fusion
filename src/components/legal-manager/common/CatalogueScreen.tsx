@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { motion } from "framer-motion";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -128,29 +127,15 @@ export const CatalogueScreen = ({
       });
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-4">
-        <div className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-primary to-primary/60 shadow-lg">
-          <Icon className="h-7 w-7 text-primary-foreground" />
-        </div>
-        <div className="min-w-0">
-          <h1 className="truncate text-xl font-bold text-foreground sm:text-2xl">{title}</h1>
-          <p className="text-sm text-muted-foreground">{description}</p>
-        </div>
-      </div>
-
+    <div className="space-y-5" aria-label={title} data-description={description}>
       {tiles.length > 0 && (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
-          {tiles.map((tile, index) => (
-            <motion.div
-              key={tile.label}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-            >
-              <Card className="h-full border-border/50 bg-card/50">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
+          {tiles.map((tile) => (
+            <Card key={tile.label} className="h-full border-border bg-card/80">
                 <CardContent className="p-4">
-                  <tile.icon className="mb-2 h-6 w-6 text-primary" aria-hidden="true" />
+                  <div className="mb-3 grid h-8 w-8 place-items-center rounded-lg bg-primary/10">
+                    <tile.icon className="h-4 w-4 text-primary" aria-hidden="true" />
+                  </div>
                   <p className="text-sm font-medium text-foreground">{tile.label}</p>
                   {tile.value && (
                     <p className="mt-1 text-2xl font-bold text-foreground">{tile.value}</p>
@@ -158,7 +143,6 @@ export const CatalogueScreen = ({
                   {tile.hint && <p className="mt-1 text-xs text-muted-foreground">{tile.hint}</p>}
                 </CardContent>
               </Card>
-            </motion.div>
           ))}
         </div>
       )}

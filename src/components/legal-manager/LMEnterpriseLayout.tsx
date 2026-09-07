@@ -145,7 +145,7 @@ const LMEnterpriseLayout = ({ onBack }: LMEnterpriseLayoutProps) => {
   const heroEyebrow = child ? parent?.label : "Legal & Compliance";
 
   return (
-    <div className="flex h-dvh overflow-hidden bg-background">
+    <div className="flex min-h-dvh bg-background lg:h-dvh lg:overflow-hidden">
       <LMSidebar
         activeSection={activeSection}
         setActiveSection={setActiveSection}
@@ -153,8 +153,8 @@ const LMEnterpriseLayout = ({ onBack }: LMEnterpriseLayoutProps) => {
         className="hidden lg:flex"
       />
 
-      <div className="min-w-0 flex-1 overflow-auto">
-        <div className="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-background/85 px-4 py-3 backdrop-blur-xl lg:hidden">
+      <div className="min-w-0 flex-1 lg:overflow-auto">
+        <div className="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-background/95 px-4 py-3 backdrop-blur-xl lg:hidden">
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
               <Button variant="outline" size="icon" aria-label="Open navigation">
@@ -191,7 +191,7 @@ const LMEnterpriseLayout = ({ onBack }: LMEnterpriseLayoutProps) => {
               description="Live legal operations for Software Vala — agreements, compliance, IP and audit in one workspace."
               icon={HeroIcon}
             />
-            <main>{renderContent()}</main>
+            <main className="min-w-0">{renderContent()}</main>
           </PageShell>
         </motion.div>
       </div>
