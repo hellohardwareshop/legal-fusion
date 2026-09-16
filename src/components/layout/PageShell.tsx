@@ -31,7 +31,7 @@ export function ModuleHero({ eyebrow, title, description, icon: Icon, actions, m
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
-      className="hero-surface relative overflow-hidden p-5 sm:p-7 lg:p-9"
+      className="hero-surface relative overflow-hidden p-6 md:p-10"
     >
       <div aria-hidden className="hero-grid-pattern pointer-events-none absolute inset-0" />
       <div className="relative grid grid-cols-[minmax(0,1fr)_auto] items-center gap-5">
