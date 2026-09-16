@@ -10,7 +10,7 @@ interface PageShellProps {
 
 export function PageShell({ children, className }: PageShellProps) {
   return (
-    <div className={cn("mx-auto w-full max-w-[1440px] space-y-5 px-4 py-5 sm:px-6 lg:px-8 lg:py-6", className)}>
+    <div className={cn("mx-auto w-full max-w-[1600px] space-y-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10", className)}>
       {children}
     </div>
   );
@@ -31,7 +31,7 @@ export function ModuleHero({ eyebrow, title, description, icon: Icon, actions, m
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
-      className="hero-surface relative overflow-hidden px-5 py-6 sm:px-7 lg:px-8 lg:py-7"
+      className="hero-surface relative overflow-hidden p-6 md:p-10"
     >
       <div aria-hidden className="hero-grid-pattern pointer-events-none absolute inset-0" />
       <div className="relative grid grid-cols-[minmax(0,1fr)_auto] items-center gap-5">

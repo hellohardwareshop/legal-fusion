@@ -131,7 +131,7 @@ export const CatalogueSection = ({
 
   return (
     <Card className="overflow-hidden border-border bg-card/80">
-      <CardHeader className="gap-3 border-b border-border p-4 sm:p-5">
+      <CardHeader className="gap-3 border-b border-border p-3 sm:p-4">
         <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 sm:flex sm:flex-wrap sm:justify-between">
           <CardTitle className="flex min-w-0 items-center gap-2 text-base">
             {Icon && <Icon className="h-5 w-5 shrink-0 text-primary" />}
@@ -224,11 +224,11 @@ export const CatalogueSection = ({
           }
         >
           <div className="overflow-x-auto">
-            <Table>
+            <Table className="min-w-[680px]">
               <TableHeader>
                 <TableRow className="border-border">
                   {columns.map((column) => (
-                    <TableHead key={column.key} className={column.className}>
+                    <TableHead key={column.key} className={`h-10 px-2 ${column.className ?? ""}`}>
                       <button
                         type="button"
                         onClick={() => toggleSort(column.key)}
@@ -240,7 +240,7 @@ export const CatalogueSection = ({
                       </button>
                     </TableHead>
                   ))}
-                  <TableHead className="text-right text-muted-foreground">Actions</TableHead>
+                  <TableHead className="h-10 px-2 text-right text-muted-foreground">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -260,14 +260,14 @@ export const CatalogueSection = ({
                      className="cursor-pointer border-border transition-colors hover:bg-muted/25 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
                   >
                     {columns.map((column) => (
-                      <TableCell key={column.key} className={column.className}>
+                      <TableCell key={column.key} className={`p-2 ${column.className ?? ""}`}>
                         {column.render
                           ? column.render(record)
                           : String(record[column.key] ?? "—")}
                       </TableCell>
                     ))}
                     <TableCell
-                      className="text-right"
+                      className="p-2 text-right"
                       onClick={(event) => event.stopPropagation()}
                     >
                       <div className="flex justify-end gap-1">
@@ -288,7 +288,7 @@ export const CatalogueSection = ({
           </div>
 
           {pageCount > 1 && (
-            <div className="flex items-center justify-between gap-3 border-t border-border px-4 py-3 sm:px-5">
+            <div className="flex items-center justify-between gap-3 border-t border-border p-3 sm:p-4">
               <p className="text-xs text-muted-foreground">
                 Page {currentPage + 1} of {pageCount}
               </p>
