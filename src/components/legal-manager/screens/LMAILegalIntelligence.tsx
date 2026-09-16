@@ -62,15 +62,10 @@ const LMAILegalIntelligence = ({ activeSubSection }: LMAILegalIntelligenceProps)
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-600 to-pink-800 flex items-center justify-center shadow-lg">
-          <Brain className="w-7 h-7 text-primary-foreground" />
-        </div>
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">AI Legal Intelligence</h1>
-          <p className="text-muted-foreground">AI-powered legal analysis and automation</p>
-        </div>
-        <Badge className="bg-pink-500/20 text-pink-400 border-pink-500/50 ml-auto">HUMAN REVIEW REQUIRED</Badge>
+      <div className="flex justify-end">
+        <Badge variant="outline" className="border-primary/40 bg-primary/10 text-primary">
+          HUMAN REVIEW REQUIRED
+        </Badge>
       </div>
 
       {/* Quick Actions */}
@@ -89,11 +84,11 @@ const LMAILegalIntelligence = ({ activeSubSection }: LMAILegalIntelligenceProps)
             transition={{ delay: index * 0.1 }}
           >
             <Card 
-              className="cursor-pointer hover:scale-105 transition-transform bg-pink-500/10 border-pink-500/30"
+              className="cursor-pointer border-primary/25 bg-primary/5 transition-colors hover:border-primary/45 hover:bg-primary/10"
               onClick={action.onClick}
             >
               <CardContent className="p-4 text-center">
-                <action.icon className="w-8 h-8 text-pink-400 mx-auto mb-2" />
+                <action.icon className="mx-auto mb-2 h-8 w-8 text-primary" />
                 <p className="text-sm font-medium text-foreground">{action.label}</p>
               </CardContent>
             </Card>
@@ -105,7 +100,7 @@ const LMAILegalIntelligence = ({ activeSubSection }: LMAILegalIntelligenceProps)
       <Card className="bg-card/50 border-border/50">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-pink-400" />
+            <Sparkles className="w-5 h-5 text-primary" />
             AI Features
           </CardTitle>
         </CardHeader>
@@ -118,14 +113,14 @@ const LMAILegalIntelligence = ({ activeSubSection }: LMAILegalIntelligenceProps)
                 className="flex items-center justify-between p-4 rounded-lg bg-surface/50 border border-border"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-pink-600/20 flex items-center justify-center">
-                    <Brain className="w-5 h-5 text-pink-400" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/15">
+                      <Brain className="w-5 h-5 text-primary" />
                   </div>
                   <div>
                     <p className="font-medium text-foreground">{feature.name}</p>
                     <div className="flex items-center gap-2 mt-1">
                       <Badge variant="outline" className="text-xs">{feature.type}</Badge>
-                      <span className="text-xs text-pink-400">Accuracy: {feature.accuracy}</span>
+                      <span className="text-xs text-primary">Accuracy: {feature.accuracy}</span>
                       <span className="text-xs text-muted-foreground">{feature.uses} uses</span>
                     </div>
                   </div>
@@ -156,7 +151,7 @@ const LMAILegalIntelligence = ({ activeSubSection }: LMAILegalIntelligenceProps)
       <Dialog open={openTask !== null} onOpenChange={(o) => !o && setOpenTask(null)}>
         <DialogContent className="max-w-2xl bg-card border-border">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-pink-400">
+            <DialogTitle className="flex items-center gap-2 text-primary">
               <Sparkles className="w-5 h-5" />
               {openTask}
             </DialogTitle>
@@ -170,7 +165,6 @@ const LMAILegalIntelligence = ({ activeSubSection }: LMAILegalIntelligenceProps)
           <Button
             onClick={() => openTask && runAI(openTask)}
             disabled={isLoading}
-            className="bg-pink-600 hover:bg-pink-700 text-primary-foreground"
           >
             {isLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Brain className="w-4 h-4 mr-2" />}
             {isLoading ? "Analysing..." : "Run AI"}

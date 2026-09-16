@@ -8,7 +8,6 @@ import {
   FileCheck,
   Globe,
   Lock,
-  Scale,
   ShieldAlert,
   Timer,
   XCircle,

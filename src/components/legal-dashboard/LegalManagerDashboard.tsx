@@ -126,7 +126,7 @@ const LegalManagerDashboard = () => {
           <div className="flex items-center gap-3">
             <div className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-sm font-bold text-primary-foreground shadow-sm">LM</div>
             <div className="min-w-0">
-              <h1 className="truncate text-sm font-semibold text-foreground">Legal Manager</h1>
+              <h2 className="truncate text-sm font-semibold text-foreground">Legal Manager</h2>
               <p className="truncate text-xs text-muted-foreground">Compliance Center</p>
             </div>
           </div>
