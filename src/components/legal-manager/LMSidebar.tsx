@@ -42,6 +42,8 @@ interface LMSidebarProps {
   onBack?: () => void;
   /** Called after any navigation — used to close the mobile drawer. */
   onNavigate?: () => void;
+  /** Uses the reference's compact 64px header inside the mobile drawer. */
+  mobileDrawer?: boolean;
   className?: string;
 }
 
@@ -272,7 +274,7 @@ export const menuItems: MenuItem[] = [
   },
 ];
 
-const LMSidebar = ({ activeSection, setActiveSection, onBack, onNavigate, className }: LMSidebarProps) => {
+const LMSidebar = ({ activeSection, setActiveSection, onBack, onNavigate, mobileDrawer = false, className }: LMSidebarProps) => {
   const [expandedItems, setExpandedItems] = useState<string[]>(["dashboard"]);
 
   const toggleExpand = (id: string) => {
@@ -304,8 +306,8 @@ const LMSidebar = ({ activeSection, setActiveSection, onBack, onNavigate, classN
       )}
     >
       {/* Header */}
-      <div className="border-b border-sidebar-border p-3">
-        <div className="mb-3 flex items-center gap-3 px-1">
+      <div className={cn("border-b border-sidebar-border p-3", mobileDrawer && "flex h-16 shrink-0 items-center pr-14")}>
+        <div className={cn("flex items-center gap-3 px-1", !mobileDrawer && "mb-3")}>
           <Avatar className="h-9 w-9 rounded-xl icon3d">
             <AvatarFallback className="rounded-xl bg-primary/15 text-primary font-semibold text-sm">
               LM
@@ -317,12 +319,14 @@ const LMSidebar = ({ activeSection, setActiveSection, onBack, onNavigate, classN
           </div>
         </div>
 
-        <Badge className="mb-3 w-full justify-center rounded-lg border border-primary/25 bg-primary/10 py-1.5 font-medium text-primary">
-          <Scale className="w-3 h-3 mr-1.5" />
-          LEGAL MANAGER
-        </Badge>
+        {!mobileDrawer && (
+          <Badge className="mb-3 w-full justify-center rounded-lg border border-primary/25 bg-primary/10 py-1.5 font-medium text-primary">
+            <Scale className="w-3 h-3 mr-1.5" />
+            LEGAL MANAGER
+          </Badge>
+        )}
 
-        {onBack && (
+        {onBack && !mobileDrawer && (
           <Button
             variant="outline"
             size="sm"
@@ -334,16 +338,18 @@ const LMSidebar = ({ activeSection, setActiveSection, onBack, onNavigate, classN
           </Button>
         )}
 
-        <div className="flex items-center gap-2 rounded-lg border border-sidebar-border bg-sidebar-accent/35 px-3 py-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-accent-emerald animate-pulse" />
-          <span className="text-[11px] leading-tight text-muted-foreground">
-            AI assistance active · Human approval required
-          </span>
-        </div>
+        {!mobileDrawer && (
+          <div className="flex items-center gap-2 rounded-lg border border-sidebar-border bg-sidebar-accent/35 px-3 py-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-accent-emerald animate-pulse" />
+            <span className="text-[11px] leading-tight text-muted-foreground">
+              AI assistance active · Human approval required
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Navigation */}
-      <ScrollArea className="flex-1 px-2 py-2">
+      <ScrollArea className="flex-1 px-2 py-3">
         <nav className="space-y-0.5">
           {menuItems.map((item) => {
             const Icon = item.icon;

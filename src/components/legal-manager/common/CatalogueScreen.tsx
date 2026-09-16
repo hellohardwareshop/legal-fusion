@@ -127,12 +127,12 @@ export const CatalogueScreen = ({
       });
 
   return (
-    <div className="space-y-5" aria-label={title} data-description={description}>
+    <div className="space-y-6" aria-label={title} data-description={description}>
       {tiles.length > 0 && (
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
           {tiles.map((tile) => (
             <Card key={tile.label} className="h-full border-border bg-card/80">
-                <CardContent className="p-4">
+                <CardContent className="p-3 sm:p-4">
                   <div className="mb-3 grid h-8 w-8 place-items-center rounded-lg bg-primary/10">
                     <tile.icon className="h-4 w-4 text-primary" aria-hidden="true" />
                   </div>

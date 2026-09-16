@@ -161,13 +161,14 @@ const LMEnterpriseLayout = ({ onBack }: LMEnterpriseLayoutProps) => {
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[280px] border-sidebar-border p-0">
+            <SheetContent side="left" className="w-[280px] max-w-[85vw] border-sidebar-border bg-sidebar p-0">
               <SheetTitle className="sr-only">Legal Manager navigation</SheetTitle>
               <LMSidebar
                 activeSection={activeSection}
                 setActiveSection={setActiveSection}
                 onBack={onBack}
                 onNavigate={() => setMobileOpen(false)}
+                mobileDrawer
                 className="flex w-full border-r-0"
               />
             </SheetContent>
